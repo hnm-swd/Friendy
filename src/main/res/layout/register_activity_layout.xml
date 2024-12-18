@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="245dp"
+        android:src="@drawable/logo1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="ĐĂNG KÍ"
+        android:textColor="@color/black"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+    <EditText
+        android:id="@+id/edtuser"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="Tên người dùng"
+        android:textColor="#A8A6A7"
+        android:layout_marginLeft="50dp"/>
+    <EditText
+        android:id="@+id/edtemail"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="Email"
+        android:textColor="#A8A6A7"
+        android:layout_marginLeft="50dp"/>
+    <EditText
+        android:id="@+id/edtpassword"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="Mật khẩu(8-20 kí tự)"
+        android:textColor="#A8A6A7"
+        android:layout_marginLeft="50dp"
+        />
+    <EditText
+        android:id="@+id/edtconfirmpassword"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="Xác nhận mật khẩu"
+        android:textColor="#A8A6A7"
+        android:layout_marginLeft="50dp"
+        />
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:id="@+id/btncreateaccount"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="Đăng kí"
+        android:textColor="@color/white"
+        android:background="@drawable/shapebuttonlogin"
+        android:layout_marginLeft="150dp"
+        />
+    <TableLayout
+        android:layout_marginLeft="125dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <TableRow>
+            <TextView
+                android:textColor="#A8A6A7"
+                android:text="Đã có tài khoản?"/><TextView
+            />
+            <TextView
+                android:id="@+id/textlogin"
+                android:text=" Đăng nhập"
+                android:textStyle="bold"/>            />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

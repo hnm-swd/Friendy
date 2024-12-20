@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Social_network_friendy" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Màu sắc chính sáng hơn -->
+        <item name="colorPrimary">@color/blue_500</item>
+        <item name="colorPrimaryVariant">@color/blue_700</item>
+        <item name="colorOnPrimary">@color/white</item>
 
-    <style name="Theme.Social_network_Friendy" parent="android:Theme.Material.Light.NoActionBar" />
+        <!-- Phong cách CardView -->
+        <item name="cardViewStyle">@style/CardViewStyle</item>
+    </style>
+
+    <style name="CardViewStyle">
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">6dp</item>
+    </style>
 </resources>
+
+

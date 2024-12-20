@@ -91,17 +91,28 @@
 //}
 //
 package com.example.social_network_friendy;
-
+import com.google.firebase.firestore.PropertyName;
 import java.util.List;
 
 public class Post {
 
+    @PropertyName("username")
     private String username;
+
+    @PropertyName("content")
     private String content;
-    private String timeAgo; // Thời gian đã trôi qua
-    private List<String> imageBase64; // Danh sách các ảnh Base64
-    private int likeCount; // Số lượt like
-    private int commentCount; // Số lượt comment
+
+    @PropertyName("timeAgo")
+    private String timeAgo;
+
+    @PropertyName("imageBase64")
+    private List<String> imageBase64;
+
+    @PropertyName("likeCount")
+    private int likeCount;
+
+    @PropertyName("commentCount")
+    private int commentCount;
 
     // Constructor
     public Post(String username, String content, String timeAgo, List<String> imageBase64, int likeCount, int commentCount) {
@@ -112,7 +123,9 @@ public class Post {
         this.likeCount = likeCount;
         this.commentCount = commentCount;
     }
-
+    public Post() {
+        // Constructor mặc định cho Firebase
+    }
     // Getter và Setter
     public String getUsername() {
         return username;

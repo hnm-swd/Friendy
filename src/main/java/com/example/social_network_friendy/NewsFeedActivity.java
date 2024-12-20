@@ -88,25 +88,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
 public class NewsFeedActivity extends Activity {
-    ActivityNewsFeedBinding binding;
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     private List<Post> postList;
     private DatabaseReference postsRef;
-
-    // Biến để điều chỉnh số lượng bài viết hiển thị
-    private int postLimit = 10;  // Mặc định là 10 bài viết gần đây nhất
+    private ActivityNewsFeedBinding binding; // Khai báo biến binding
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityNewsFeedBinding.inflate(getLayoutInflater());
-        setContentView(R.layout.activity_news_feed);
+        binding = ActivityNewsFeedBinding.inflate(getLayoutInflater()); // Khởi tạo binding
+        setContentView(binding.getRoot());  // Đặt root view cho activity
 
-        // Khởi tạo RecyclerView
-        recyclerView = findViewById(R.id.recyclerView);  // assuming you have a RecyclerView with this ID
+        // Gán RecyclerView từ binding
+        recyclerView = binding.postRecyclerView; // Thay đổi theo ID trong XML
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         postList = new ArrayList<>();
         postAdapter = new PostAdapter(postList);
         recyclerView.setAdapter(postAdapter);
@@ -115,22 +114,16 @@ public class NewsFeedActivity extends Activity {
         postsRef = FirebaseDatabase.getInstance().getReference("posts");
 
         // Lắng nghe thay đổi dữ liệu trong Firebase
-        Query postsQuery = postsRef.orderByChild("timestamp").limitToLast(postLimit);  // Sử dụng postLimit ở đây
-        postsQuery.addValueEventListener(new ValueEventListener() {
+        postsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                postList.clear();  // Xóa dữ liệu cũ trước khi cập nhật
+                postList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
                     if (post != null) {
-                        postList.add(post); // Thêm bài viết vào danh sách
+                        postList.add(post);
                     }
                 }
-
-                // Đảo ngược danh sách để hiển thị bài viết mới nhất lên đầu
-                Collections.reverse(postList);
-
-                // Cập nhật RecyclerView
                 postAdapter.notifyDataSetChanged();
             }
 
@@ -141,11 +134,9 @@ public class NewsFeedActivity extends Activity {
         });
 
         // Chuyển sang màn hình tạo bài viết khi click vào nút "Go Create Post"
-        binding.goCreatePost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(NewsFeedActivity.this, PostActivity.class));
-            }
+        binding.goCreatePost.setOnClickListener(view -> {
+            startActivity(new Intent(NewsFeedActivity.this, PostActivity.class));
         });
     }
 }
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".NewsFeedActivity"
+    android:background="@color/white">
+
+    <!-- CardView for the user profile and post prompt -->
+    <androidx.cardview.widget.CardView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:contentPadding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Profile image -->
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageView"
+                android:src="@drawable/person_image"
+                android:layout_margin="8dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"/>
+
+            <!-- Button for writing a post -->
+            <TextView
+                android:id="@+id/goCreatePost"
+                android:layout_toEndOf="@id/imageView"
+                android:layout_marginStart="8dp"
+                android:padding="15dp"
+                android:background="@null"
+                android:text="Write something here..."
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- RecyclerView to display posts -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/postRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>

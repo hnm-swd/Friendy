@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Toolbar or AppBar for navigation (optional) -->
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:title="Post a Comment"
+        android:background="?attr/colorPrimary"
+        android:titleTextColor="@android:color/white"
+        android:elevation="4dp" />
+
+    <!-- EditText for the comment input -->
+    <EditText
+        android:id="@+id/commentEditText"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:hint="Write your comment here..."
+        android:padding="12dp"
+        android:gravity="top|start"
+        android:background="@android:drawable/edit_text"
+        android:inputType="textMultiLine|textCapSentences"
+        android:scrollbars="vertical"
+        android:lineSpacingExtra="8dp"
+        android:textColor="#000000"
+        android:textSize="16sp"/>
+
+    <!-- Button to submit the comment -->
+    <Button
+        android:id="@+id/btnSubmitComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Submit Comment"
+        android:textColor="@android:color/white"
+        android:background="@color/blue_500"
+        android:padding="12dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/commentsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:padding="8dp" />
+
+</LinearLayout>

@@ -471,5 +471,5 @@ public class PostActivity extends Activity {
             imageContainer.addView(imageView);
         }
     }
-    
+
 }

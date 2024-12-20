@@ -1,427 +1,153 @@
-package com.example.social_network_friendy;//package com.example.social_network_friendy;
-//
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.ImageView;
-//import android.widget.TextView;
-//import androidx.annotation.NonNull;
-//import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
-import java.util.List;
+package com.example.social_network_friendy;
 
-//public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-//
-//    private List<PostModel> postList;
-//
-//    public PostAdapter(List<PostModel> postList) {
-//        this.postList = postList;
-//    }
-//
-//    @NonNull
-//    @Override
-//    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
-//        return new ViewHolder(view);
-//    }
-//    @Override
-//    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//        PostModel post = postList.get(position);
-//
-//        holder.usernameTextView.setText(post.getUsername());
-//        holder.timeTextView.setText(post.getTime());
-//        holder.contentTextView.setText(post.getContent());
-//
-//        // Load image using Glide
-//        Glide.with(holder.itemView.getContext())
-//                .load(post.getImageUrl())
-//                .placeholder(R.drawable.profileimage) // Placeholder image
-//                .into(holder.postImageView);
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return postList.size();
-//    }
-//
-//    public static class ViewHolder extends RecyclerView.ViewHolder {
-//        TextView usernameTextView, timeTextView, contentTextView;
-//        ImageView postImageView;
-//
-//        public ViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            usernameTextView = itemView.findViewById(R.id.tvUsername); // Match with ID in XML
-//            timeTextView = itemView.findViewById(R.id.tvTime); // Match with ID in XML
-//            contentTextView = itemView.findViewById(R.id.tvContent); // Match with ID in XML
-//            postImageView = itemView.findViewById(R.id.imgPost); // Match with ID in XML
-//        }
-//    }
-//}
-//public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
-//    private List<PostModel> postList;
-//
-//    public PostAdapter(List<PostModel> postList) {
-//        this.postList = postList;
-//    }
-//
-//    @NonNull
-//    @Override
-//    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext())
-//                .inflate(R.layout.post_item_layout, parent, false);
-//        return new PostViewHolder(view);
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-//        PostModel post = postList.get(position);
-//        holder.usernameTextView.setText(post.getUsername());
-//        holder.contentTextView.setText(post.getContent());
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return postList.size();
-//    }
-//
-//    static class PostViewHolder extends RecyclerView.ViewHolder {
-//        TextView usernameTextView, contentTextView;
-//
-//        public PostViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            usernameTextView = itemView.findViewById(R.id.textViewUsername);
-//            contentTextView = itemView.findViewById(R.id.textViewContent);
-//        }
-//    }
-//}
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
-
-import java.util.List;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
-import com.example.social_network_friendy.Post;
-
-import java.util.List;
-
-//public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
-//
-//    private List<Post> posts;
-//
-//    public PostAdapter(List<Post> posts) {
-//        this.posts = posts;
-//    }
-//
-//    @NonNull
-//    @Override
-//    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
-//        return new PostViewHolder(view);
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-//        Post post = posts.get(position);
-//        holder.titleTextView.setText(post.getContent());
-//
-//        String imageUriString = String.valueOf(post.getImageUri());
-//        if (imageUriString != null && !imageUriString.isEmpty()) {
-//            holder.postImageView.setVisibility(View.VISIBLE);
-//            Glide.with(holder.postImageView.getContext())
-//                    .load(imageUriString)
-//                    .placeholder(R.drawable.ic_launcher_background) // Ảnh hiển thị khi đang tải
-////                    .error(R.drawable.x) // Ảnh lỗi
-//                    .into(holder.postImageView);
-//        } else {
-//            holder.postImageView.setVisibility(View.GONE);
-//        }
-//    }
-//
-//
-//
-//
-//
-//    @Override
-//    public int getItemCount() {
-//        return posts.size();
-//    }
-//
-//    public static class PostViewHolder extends RecyclerView.ViewHolder {
-//        TextView titleTextView;
-//        ImageView postImageView;
-//
-//        public PostViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            titleTextView = itemView.findViewById(R.id.tvContent); // ID của title trong post_item.xml
-//            postImageView = itemView.findViewById(R.id.imgPost); // ID của ảnh trong post_item.xml
-//        }
-//    }
-//    // PostAdapter.java
-//    public void updatePosts(List<Post> newPosts) {
-//        this.posts.clear(); // Xóa danh sách cũ
-//        this.posts.addAll(newPosts); // Thêm bài viết mới
-//        notifyDataSetChanged(); // Thông báo adapter để cập nhật giao diện
-//    }
-//
-//}
-//public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
-//
-//    private List<Post> posts;
-//
-//    public PostAdapter(List<Post> posts) {
-//        this.posts = posts;
-//    }
-//
-//    @NonNull
-//    @Override
-//    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
-//        return new PostViewHolder(view);
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-//        Post post = posts.get(position);
-//
-//        // Hiển thị nội dung bài viết
-//        holder.titleTextView.setText(post.getContent());
-//
-//        // Hiển thị hình ảnh (nếu có)
-//        if (post.getImageUri() != null && !post.getImageUri().isEmpty()) {
-//            holder.postImageView.setVisibility(View.VISIBLE);
-//            Glide.with(holder.postImageView.getContext())
-//                    .load(post.getImageUri().get(0)) // Lấy ảnh đầu tiên từ danh sách ảnh
-//                    .placeholder(R.drawable.ic_launcher_background)
-//                    .into(holder.postImageView);
-//        } else {
-//            holder.postImageView.setVisibility(View.GONE);
-//        }
-//
-//        // Sự kiện click vào bài đăng
-//        holder.itemView.setOnClickListener(v -> {
-//            // Xử lý sự kiện click vào bài viết, sử dụng postId để làm điều gì đó
-//            String postId = post.getPostId();
-//            Toast.makeText(holder.itemView.getContext(), "Post ID: " + postId, Toast.LENGTH_SHORT).show();
-//
-//            // Ví dụ: Chuyển đến màn hình chi tiết bài viết
-//            // Intent intent = new Intent(holder.itemView.getContext(), PostDetailActivity.class);
-//            // intent.putExtra("POST_ID", postId);
-//            // holder.itemView.getContext().startActivity(intent);
-//        });
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return posts.size();
-//    }
-//
-//    public static class PostViewHolder extends RecyclerView.ViewHolder {
-//        TextView titleTextView;
-//        ImageView postImageView;
-//
-//        public PostViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            titleTextView = itemView.findViewById(R.id.tvContent); // ID của title trong post_item.xml
-//            postImageView = itemView.findViewById(R.id.imgPost); // ID của ảnh trong post_item.xml
-//        }
-//    }
-//
-//    // Cập nhật danh sách bài viết
-//    public void updatePosts(List<Post> newPosts) {
-//        this.posts.clear();
-//        this.posts.addAll(newPosts);
-//        notifyDataSetChanged();
-//    }
-//}
-
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Base64;
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.ImageView;
-//import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
-
-//import java.util.ArrayList;
-//
-//public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
-//
-//    private ArrayList<Post> postsList;
-//
-//    // Constructor
-//    public PostAdapter(ArrayList<Post> postsList) {
-//        this.postsList = postsList;
-//    }
-//
-//    @Override
-//    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
-//        return new PostViewHolder(view);
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(PostViewHolder holder, int position) {
-//        Post post = postsList.get(position);
-//
-//        // Hiển thị nội dung bài viết
-//        holder.contentTextView.setText(post.getContent());
-//
-//        // Hiển thị ảnh nếu có
-//        if (post.getImageBase64() != null && !post.getImageBase64().isEmpty()) {
-//            // Lặp qua tất cả ảnh trong danh sách Base64
-//            for (String base64Image : post.getImageBase64()) {
-//                Bitmap bitmap = decodeBase64ToBitmap(base64Image);
-//                if (bitmap != null) {
-//                    holder.imageView.setImageBitmap(bitmap);
-//                }
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return postsList.size();
-//    }
-//
-//    public static class PostViewHolder extends RecyclerView.ViewHolder {
-//        public TextView contentTextView;
-//        public ImageView imageView;
-//
-//        public PostViewHolder(View itemView) {
-//            super(itemView);
-//            contentTextView = itemView.findViewById(R.id.tvContent);
-//            imageView = itemView.findViewById(R.id.imgPost);
-//        }
-//    }
-//
-//    // Chuyển đổi Base64 thành Bitmap
-//    private Bitmap decodeBase64ToBitmap(String base64Str) {
-//        try {
-//            byte[] decodedString = Base64.decode(base64Str, Base64.DEFAULT);
-//            return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//}
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
-//public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
-//    private List<Post> postList;
-//
-//    public PostAdapter(List<Post> postList) {
-//        this.postList = postList;
-//    }
-//
-//    @Override
-//    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
-//        return new PostViewHolder(view);
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(PostViewHolder holder, int position) {
-//        Post post = postList.get(position);
-//        holder.contentTextView.setText(post.getContent());
-//        // Hiển thị ảnh (nếu có)
-//        if (post.getImageBase64()    != null && !post.getImageBase64().isEmpty()) {
-//            Glide.with(holder.itemView.getContext())
-//                    .load(post.getImageBase64().get(0))  // Chỉ lấy ảnh đầu tiên
-//                    .into(holder.postImageView);
-//        }
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return postList.size();
-//    }
-//
-//    public static class PostViewHolder extends RecyclerView.ViewHolder {
-//        TextView contentTextView;
-//        ImageView postImageView;
-//
-//        public PostViewHolder(View itemView) {
-//            super(itemView);
-//            contentTextView = itemView.findViewById(R.id.tvContent);
-//            postImageView = itemView.findViewById(R.id.imgPost);
-//        }
-//    }
-//}
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
-    private List<Post> postList;
+    private Context context; // Context để sử dụng trong Intent
+    private List<Post> postList; // Danh sách bài viết
 
-    public PostAdapter(List<Post> postList) {
-        this.postList = postList;
+    // Constructor nhận thêm context
+    public PostAdapter(Context context, List<Post> postList) {
+        this.context = context;
+        this.postList = postList != null ? postList : new ArrayList<>();
     }
 
+    // Tạo ViewHolder và inflate layout
+    @NonNull
     @Override
-    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
         return new PostViewHolder(itemView);
     }
 
+    // Gắn dữ liệu vào ViewHolder
     @Override
-    public void onBindViewHolder(PostViewHolder holder, int position) {
-        Post post = postList.get(position);
-
-        // Set avatar, username, time, and content
-        holder.tvUsername.setText(post.getUsername());
-        holder.tvTime.setText(post.getTimeAgo());
-        holder.tvContent.setText(post.getContent());
-
-        // Set image if available
-        if (post.getImageBase64() != null && !post.getImageBase64().isEmpty()) {
-            holder.imgPost.setVisibility(View.VISIBLE);
-            Glide.with(holder.itemView.getContext()).load(post.getImageBase64()).into(holder.imgPost);
-        } else {
-            holder.imgPost.setVisibility(View.GONE);
+    public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
+        if (position < 0 || position >= postList.size()) {
+            Log.e("PostAdapter", "Invalid position: " + position);
+            return;
         }
 
-        // Set like count
+        Post post = postList.get(position);
+
+        if (post == null) {
+            Log.e("PostAdapter", "Post is null at position: " + position);
+            return;
+        }
+
+        // Set user name
+        holder.tvUsername.setText(post.getUsername() != null ? post.getUsername() : "Người dùng");
+
+        // Set time of post
+        holder.tvTime.setText(post.getTimeAgo() != null ? post.getTimeAgo() : "Vào lúc nào");
+
+        // Set post content
+        holder.tvContent.setText(post.getContent() != null ? post.getContent() : "Chưa có nội dung");
+
+        // Hiển thị hình ảnh bài viết (nếu có)
+        if (post.getImageBase64() != null && !post.getImageBase64().isEmpty()) {
+            holder.imgPost.setVisibility(View.VISIBLE);
+            try {
+                Glide.with(holder.itemView.getContext())
+                        .load(Base64.decode(post.getImageBase64().get(0), Base64.DEFAULT)) // Chỉ lấy hình ảnh đầu tiên
+                        .override(500, 500) // Resize ảnh thành 500x500
+                        .into(holder.imgPost);
+            } catch (Exception e) {
+                Log.e("PostAdapter", "Error loading image: " + e.getMessage());
+                holder.imgPost.setVisibility(View.GONE);
+            }
+        } else {
+            holder.imgPost.setVisibility(View.GONE); // Ẩn ảnh nếu không có ảnh
+        }
+
+        // Set số lượng likes
         holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
 
-        // Set comment count
+        // Set số lượng bình luận
         holder.tvCommentCount.setText(String.valueOf(post.getCommentCount()));
+
+        // Xử lý sự kiện click vào nút tim (like)
+        holder.imgHeart.setOnClickListener(v -> {
+            boolean hasUserLiked = post.getHasUserLiked(); // Kiểm tra xem người dùng đã thích bài viết chưa
+
+            Log.d("PostAdapter", "Heart clicked for post: " + post.getPostId());
+
+            if (hasUserLiked) {
+                // Nếu người dùng đã thích, hủy like (giảm số lượt like)
+                post.setLikeCount(post.getLikeCount() - 1);
+                post.setHasUserLiked(false); // Đánh dấu là chưa thích
+                holder.imgHeart.setImageResource(R.drawable.heart); // Đổi icon thành "tim rỗng"
+            } else {
+                // Nếu người dùng chưa thích, like bài viết (tăng số lượt like)
+                post.setLikeCount(post.getLikeCount() + 1);
+                post.setHasUserLiked(true); // Đánh dấu là đã thích
+                holder.imgHeart.setImageResource(R.drawable.ic_heart_filled); // Đổi icon thành "tim đầy"
+            }
+
+            // Cập nhật lại số lượt like trên UI
+            holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
+        });
+
+        // Xử lý sự kiện click vào biểu tượng bình luận
+        holder.imgComment.setOnClickListener(v -> {
+            Log.d("PostAdapter", "Comment clicked for post: " + post.getPostId());
+
+            // Tạo một Intent để mở CommentActivity
+            Intent intent = new Intent(context, CommentActivity.class);
+            intent.putExtra("postId", post.getPostId()); // Truyền postId sang CommentActivity
+            context.startActivity(intent); // Bắt đầu activity
+        });
+// Handle comment icon click event
+        holder.imgComment.setOnClickListener(v -> {
+            Log.d("PostAdapter", "Comment clicked for post: " + post.getPostId());
+
+            // Tạo Intent để mở CommentActivity
+            Intent intent = new Intent(context, CommentActivity.class);
+            intent.putExtra("postId", post.getPostId()); // Truyền postId vào CommentActivity
+            ((Activity) context).startActivityForResult(intent, 1); // Mở Activity và nhận kết quả từ Activity
+
+        });
+
+
     }
 
+    // Trả về số lượng bài viết
     @Override
     public int getItemCount() {
-        return postList.size();
+        return postList != null ? postList.size() : 0;
     }
 
+    // Cập nhật danh sách bài viết (dùng để làm mới danh sách)
+    public void updatePosts(List<Post> newPosts) {
+        if (newPosts != null) {
+            if (this.postList == null) {
+                this.postList = new ArrayList<>();
+            }
+            this.postList.clear();
+            this.postList.addAll(newPosts);
+            notifyDataSetChanged();
+        }
+    }
+
+    // ViewHolder để đại diện cho mỗi bài viết
     public static class PostViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvUsername, tvTime, tvContent, tvLikeCount, tvCommentCount;
@@ -437,7 +163,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             imgPost = itemView.findViewById(R.id.imgPost);
             imgHeart = itemView.findViewById(R.id.imgHeart);
             imgComment = itemView.findViewById(R.id.imgComment);
+
+            if (tvUsername == null || tvContent == null || imgPost == null) {
+                Log.e("PostViewHolder", "Error inflating View, check post_item.xml");
+            }
         }
     }
 }
-

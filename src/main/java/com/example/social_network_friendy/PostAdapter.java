@@ -15,6 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,32 +84,46 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.imgPost.setVisibility(View.GONE); // Ẩn ảnh nếu không có ảnh
         }
 
-        // Set số lượng likes
-        holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
-
-        // Set số lượng bình luận
-        holder.tvCommentCount.setText(String.valueOf(post.getCommentCount()));
-
-        // Xử lý sự kiện click vào nút tim (like)
         holder.imgHeart.setOnClickListener(v -> {
-            boolean hasUserLiked = post.getHasUserLiked(); // Kiểm tra xem người dùng đã thích bài viết chưa
+            String postId = post.getPostId();
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("likes");
 
-            Log.d("PostAdapter", "Heart clicked for post: " + post.getPostId());
+            postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean hasUserLiked = snapshot.hasChild(userId);
 
-            if (hasUserLiked) {
-                // Nếu người dùng đã thích, hủy like (giảm số lượt like)
-                post.setLikeCount(post.getLikeCount() - 1);
-                post.setHasUserLiked(false); // Đánh dấu là chưa thích
-                holder.imgHeart.setImageResource(R.drawable.heart); // Đổi icon thành "tim rỗng"
-            } else {
-                // Nếu người dùng chưa thích, like bài viết (tăng số lượt like)
-                post.setLikeCount(post.getLikeCount() + 1);
-                post.setHasUserLiked(true); // Đánh dấu là đã thích
-                holder.imgHeart.setImageResource(R.drawable.ic_heart_filled); // Đổi icon thành "tim đầy"
-            }
+                    if (hasUserLiked) {
+                        // Nếu người dùng đã thích, xóa like (bỏ tim)
+                        postRef.child(userId).removeValue();
+                        post.setLikeCount(post.getLikeCount() - 1);
+                        post.setHasUserLiked(false);
+                        holder.imgHeart.setImageResource(R.drawable.heart); // Tim rỗng
+                    } else {
+                        // Nếu người dùng chưa thích, thêm like
+                        postRef.child(userId).setValue(true);
+                        post.setLikeCount(post.getLikeCount() + 1);
+                        post.setHasUserLiked(true);
+                        holder.imgHeart.setImageResource(R.drawable.ic_heart_filled); // Tim đầy
+                    }
 
-            // Cập nhật lại số lượt like trên UI
-            holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
+                    // Cập nhật số lượng like lên Firebase
+                    FirebaseDatabase.getInstance()
+                            .getReference("posts")
+                            .child(postId)
+                            .child("likeCount")
+                            .setValue(post.getLikeCount());
+
+                    // Cập nhật giao diện
+                    holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("PostAdapter", "Failed to update likes: " + error.getMessage());
+                }
+            });
         });
 
         // Xử lý sự kiện click vào biểu tượng bình luận
@@ -170,3 +190,5 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
     }
 }
+
+

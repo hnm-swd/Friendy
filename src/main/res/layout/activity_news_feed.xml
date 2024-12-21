@@ -10,46 +10,90 @@
 
     <!-- CardView for the user profile and post prompt -->
     <androidx.cardview.widget.CardView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="30dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
-        app:contentPadding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        app:contentPadding="5dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <!-- Profile image -->
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imageView"
-                android:src="@drawable/person_image"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
                 android:layout_margin="8dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp"/>
+                android:src="@drawable/person_image" />
 
             <!-- Button for writing a post -->
             <TextView
                 android:id="@+id/goCreatePost"
-                android:layout_toEndOf="@id/imageView"
-                android:layout_marginStart="8dp"
-                android:padding="15dp"
-                android:background="@null"
-                android:text="Write something here..."
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"/>
-
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/imageView"
+                android:background="@null"
+                android:padding="15dp"
+                android:text="Write something here..." />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- RecyclerView to display posts -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/postRecyclerView"
+    <!-- ScrollView containing the RecyclerView -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:fillViewport="true">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/postRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
 
+    <!-- Fixed Bottom Navigation Bar -->
+    <!-- Larger Bottom Navigation Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#F5F5F5"
+        android:padding="2dp"
+        android:layout_alignParentBottom="true">
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_home" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_search" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_add" /> <!-- Icon add -->
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_favorite" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_profile" />
+</LinearLayout>
 </LinearLayout>

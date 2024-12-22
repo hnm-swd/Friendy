@@ -215,19 +215,53 @@ public class PostActivity extends Activity {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    private void postNewContent(String content, ArrayList<String> base64Images) {
-        String postId = postsRef.push().getKey();
-        if (postId == null) {
-            Log.e("FirebaseError", "Không thể tạo postId");
-            Toast.makeText(this, "Không thể tạo postId", Toast.LENGTH_SHORT).show();
-            return;
-        }
-    
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "Bạn chưa đăng nhập", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//    private void postNewContent(String content, ArrayList<String> base64Images) {
+//        String postId = postsRef.push().getKey();
+//        if (postId == null) {
+//            Log.e("FirebaseError", "Không thể tạo postId");
+//            Toast.makeText(this, "Không thể tạo postId", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        String username = (user != null) ? user.getDisplayName() : "Unknown User";
+//        String timeAgo = DateUtils.getRelativeTimeSpanString(System.currentTimeMillis()).toString();
+//        int likeCount = 0;
+//        int commentCount = 0;
+//
+//        Post newPost = new Post(postId, username, content, timeAgo, base64Images, likeCount, commentCount);
+//
+//        postsRef.child(postId).setValue(newPost)
+//                .addOnCompleteListener(task -> {
+//                    if (task.isSuccessful()) {
+//                        Toast.makeText(this, "Bài viết đã được đăng!", Toast.LENGTH_SHORT).show();
+//                        // Redirect to NewsFeedActivity after successful post
+//                        Intent intent = new Intent(PostActivity.this, NewsFeedActivity.class);
+//                        startActivity(intent);
+//                        finish();
+//                    } else {
+//                        Log.e("FirebaseError", "Không thể đăng bài", task.getException());
+//                        Toast.makeText(this, "Không thể đăng bài!", Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+//                .addOnFailureListener(e -> {
+//                    Log.e("FirebaseError", "Lỗi khi đăng bài", e);
+//                    Toast.makeText(this, "Lỗi khi đăng bài: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//                });
+//    }
+private void postNewContent(String content, ArrayList<String> base64Images) {
+    String postId = postsRef.push().getKey();
+    if (postId == null) {
+        Log.e("FirebaseError", "Không thể tạo postId");
+        Toast.makeText(this, "Không thể tạo postId", Toast.LENGTH_SHORT).show();
+        return;
+    }
+
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    if (user == null) {
+        Toast.makeText(this, "Bạn chưa đăng nhập", Toast.LENGTH_SHORT).show();
+        return;
+    }
 
     String userId = user.getUid();
 

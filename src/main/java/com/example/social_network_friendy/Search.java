@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,13 +45,15 @@ public class Search extends Activity {
         btnSearch = findViewById(R.id.timkiem);
         noResultText = findViewById(R.id.noResultText);
         lvFinding = findViewById(R.id.lvfinding);
-        imgmainscreen=findViewById(R.id.imgbackmainscreen);
+        imgmainscreen = findViewById(R.id.imgbackmainscreen);
 
         // Khởi tạo danh sách và adapter
         userList = new ArrayList<>();
         adapter = new USER_FINDING_ADAPTER(userList, username -> {
             // Sự kiện click trên tên người dùng
-            Toast.makeText(Search.this, "Clicked: " + username, Toast.LENGTH_SHORT).show();
+            Intent intentotherprofile = new Intent(Search.this, OtherProfileActivity.class);
+            intentotherprofile.putExtra("username", username); // Chuyển username đến OtherProfileActivity
+            startActivity(intentotherprofile);
         });
 
         lvFinding.setLayoutManager(new LinearLayoutManager(this));
@@ -60,14 +61,13 @@ public class Search extends Activity {
 
         // Tham chiếu đến Firebase Realtime Database
         db = FirebaseDatabase.getInstance();
-        // nhấn quay trở lại mainscreen
-        imgmainscreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intentmainscreen = new Intent(Search.this, MainActivityScreen.class);
-                startActivity(intentmainscreen);
-            }
+
+        // Quay lại màn hình chính
+        imgmainscreen.setOnClickListener(view -> {
+            Intent intentmainscreen = new Intent(Search.this, MainActivityScreen.class);
+            startActivity(intentmainscreen);
         });
+
         // Bắt sự kiện khi nhấn nút tìm kiếm
         btnSearch.setOnClickListener(v -> searchUser(edtFinding.getText().toString().trim()));
 
@@ -94,11 +94,11 @@ public class Search extends Activity {
             return;
         }
 
-        // Tham chiếu đến "users" trong Realtime Database
+        // Tham chiếu đến "users" trong Firebase Realtime Database
         DatabaseReference ref = db.getReference("users");
 
-        // Tìm kiếm trong Realtime Database theo username
-        ref.orderByChild("username").equalTo(query)
+        // Tìm kiếm trong Firebase Realtime Database theo username
+        ref.orderByChild("username").startAt(query).endAt(query + "\uf8ff")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -108,11 +108,6 @@ public class Search extends Activity {
                                 String username = userSnapshot.child("username").getValue(String.class);
                                 if (username != null) {
                                     userList.add(username); // Thêm tên người dùng vào danh sách
-                                    Log.d("RealtimeData", "Found username: " + username); // Ghi tên người dùng vào Log
-                                    Intent intentotherprofile= new Intent(Search.this, OtherProfileActivity.class);
-                                    intentotherprofile.putExtra("username",username);
-                                    startActivity(intentotherprofile);
-
                                 }
                             }
                             noResultText.setVisibility(View.GONE); // Ẩn thông báo "Không có kết quả"

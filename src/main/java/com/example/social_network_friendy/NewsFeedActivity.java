@@ -3,6 +3,7 @@ package com.example.social_network_friendy;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import android.util.Log;
 
 public class NewsFeedActivity extends Activity {
     private RecyclerView recyclerView;
@@ -41,7 +43,10 @@ public class NewsFeedActivity extends Activity {
         // Initialize Firebase Auth và Database Reference
         mAuth = FirebaseAuth.getInstance();
         usersRef = FirebaseDatabase.getInstance().getReference("users");
+        // Lấy giá trị của edtuser
+        String username = binding.edtuser.getText().toString();
 
+        Log.d("NewsFeedActivity", "Username: " + username);
         // Lấy người dùng hiện tại
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -53,9 +58,14 @@ public class NewsFeedActivity extends Activity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // Lấy đối tượng User từ Firebase
                     User user = dataSnapshot.getValue(User.class);
+//                    if (user != null) {
+//                        // Gán tên vào TextView có ID "appTitle"
+//                        binding.edtuser.setText(user.getUsername());
+//                    }
                     if (user != null) {
-                        // Gán tên vào TextView có ID "appTitle"
-                        binding.edtuser.setText(user.getUsername());
+                        String username = user.getUsername();
+                        Log.d("NewsFeedActivity", "Username from Firebase: " + username);
+                        binding.edtuser.setText(username);
                     }
                 }
 
@@ -139,6 +149,10 @@ public class NewsFeedActivity extends Activity {
             Intent intent = new Intent(NewsFeedActivity.this, NotificationActivity.class);
             startActivity(intent);
         });
+        ///
+//        Intent intent = new Intent(NewsFeedActivity.this, CommentActivity.class);
+//        intent.putExtra("username", username);  // Gửi username từ Firebase
+//        startActivity(intent);
 
     }
 
@@ -210,6 +224,5 @@ public class NewsFeedActivity extends Activity {
 
         notificationsRef.push().setValue(notificationData);
     }
-
 
 }

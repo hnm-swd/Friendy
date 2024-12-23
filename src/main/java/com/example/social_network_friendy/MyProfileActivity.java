@@ -1,4 +1,3 @@
-
 package com.example.social_network_friendy;
 
 import android.app.Activity;
@@ -33,7 +32,6 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
 public class MyProfileActivity extends Activity {
 
     private RecyclerView recyclerView;
@@ -42,7 +40,7 @@ public class MyProfileActivity extends Activity {
     private DatabaseReference postsRef;
 
     private TextView usernameTextView;
-    private TextView followersCountTextView; // TextView mới để hiển thị số lượng người theo dõi
+    private TextView followersCountTextView;
     private CircleImageView avatarImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
 
@@ -59,10 +57,9 @@ public class MyProfileActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         usernameTextView = findViewById(R.id.usernameTextView);
-        followersCountTextView = findViewById(R.id.followersCount);
         avatarImageView = findViewById(R.id.avatarImageView);
+        followersCountTextView = findViewById(R.id.followersCount);
 
-        // Initialize post list and adapter
         postList = new ArrayList<>();
         postAdapter = new PostAdapter(this, postList);
         recyclerView.setAdapter(postAdapter);
@@ -72,7 +69,6 @@ public class MyProfileActivity extends Activity {
             String userId = user.getUid();
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 
-            // Fetch user information
             userRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult().exists()) {
                     String username = task.getResult().child("username").getValue(String.class);
@@ -81,7 +77,7 @@ public class MyProfileActivity extends Activity {
                     if (username != null && !username.isEmpty()) {
                         usernameTextView.setText(username);
                         fetchPostsForUser(username);
-                        loadFollowersCount(username); // Gọi hàm load số lượng followers
+                        loadFollowersCount(username);
                     } else {
                         usernameTextView.setText("Unknown User");
                     }
@@ -100,32 +96,45 @@ public class MyProfileActivity extends Activity {
             usernameTextView.setText("Not logged in");
         }
 
-        // Edit profile button
         findViewById(R.id.editProfileButton).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, EditProfileActivity.class);
             startActivity(intent);
         });
-        // NewsFeed screen
         findViewById(R.id.icHome).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, NewsFeedActivity.class);
             startActivity(intent);
         });
-        // Exit button
         findViewById(R.id.exit).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, LoginActivity.class);
             startActivity(intent);
         });
-        // Post screen
         findViewById(R.id.post).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, PostActivity.class);
             startActivity(intent);
         });
 
-        // Set avatar click listener
         avatarImageView.setOnClickListener(v -> chooseImage());
 
-        // Load user profile details
         loadUserProfile();
+    }
+
+    private void loadFollowersCount(String username) {
+        DatabaseReference followersRef = FirebaseDatabase.getInstance().getReference("followers").child(username);
+
+        followersRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                long count = snapshot.getChildrenCount();
+                followersCountTextView.setText(count + " Followers");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi nếu có
+                followersCountTextView.setText("0 Followers");
+                Toast.makeText(MyProfileActivity.this, "Failed to load followers count", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void fetchPostsForUser(String username) {
@@ -148,26 +157,6 @@ public class MyProfileActivity extends Activity {
             }
         });
     }
-
-    private void loadFollowersCount(String username) {
-        DatabaseReference followersRef = FirebaseDatabase.getInstance().getReference("followers").child(username);
-
-        // Đếm số lượng followers
-        followersRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                long count = snapshot.getChildrenCount();
-                followersCountTextView.setText(count + " Followers");
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                followersCountTextView.setText("0 Followers");
-                Toast.makeText(MyProfileActivity.this, "Failed to load followers count", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 
     private void loadUserProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -219,7 +208,6 @@ public class MyProfileActivity extends Activity {
                 }
             });
 
-            // Load avatar from "avatars" node
             DatabaseReference avatarRef = FirebaseDatabase.getInstance()
                     .getReference("avatars")
                     .child(user.getUid());
@@ -242,11 +230,7 @@ public class MyProfileActivity extends Activity {
                 }
             });
         }
-
     }
-
-
-
 
     private void chooseImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -262,7 +246,6 @@ public class MyProfileActivity extends Activity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
                 avatarImageView.setImageBitmap(bitmap);
 
-                // Encode and upload to Firebase
                 String avatarBase64 = encodeBitmapToBase64(bitmap);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {

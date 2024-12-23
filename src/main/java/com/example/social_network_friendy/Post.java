@@ -26,12 +26,16 @@ public class Post {
     private String postId;
     @PropertyName("hasUserLiked")
     private boolean hasUserLiked;
+
+    @PropertyName("getTimestamp")
+    private long timestamp;
+
     // Constructor
-    public Post(String postId,String username, String content, String timeAgo, List<String> imageBase64, int likeCount, int commentCount) {
+    public Post(String postId,String username, String content, long timestamp, List<String> imageBase64, int likeCount, int commentCount) {
         this.postId = postId;
         this.username = username;
         this.content = content;
-        this.timeAgo = timeAgo;
+        this.timestamp = timestamp;
         this.imageBase64 = imageBase64;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
@@ -40,6 +44,13 @@ public class Post {
         // Constructor mặc định cho Firebase
     }
     // Getter và Setter
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
     public String getPostId() {
         return postId;
     }
@@ -64,7 +75,18 @@ public class Post {
     }
 
     public String getTimeAgo() {
-        return timeAgo;
+        long currentTime = System.currentTimeMillis();
+        long diff = currentTime - timestamp;
+
+        if (diff < 60 * 1000) {
+            return "Vừa mới";
+        } else if (diff < 60 * 60 * 1000) {
+            return (diff / (60 * 1000)) + " phút trước";
+        } else if (diff < 24 * 60 * 60 * 1000) {
+            return (diff / (60 * 60 * 1000)) + " giờ trước";
+        } else {
+            return (diff / (24 * 60 * 60 * 1000)) + " ngày trước";
+        }
     }
 
     public void setTimeAgo(String timeAgo) {

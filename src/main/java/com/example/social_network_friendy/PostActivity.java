@@ -2,6 +2,7 @@ package com.example.social_network_friendy;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -63,7 +65,8 @@ public class PostActivity extends Activity {
         btnPost = findViewById(R.id.btnPost);
         btnSelectImage = findViewById(R.id.imgUpload);
         imageContainer = findViewById(R.id.imageContainer);
-        usernameTextView = findViewById(R.id.tvtUsername); // Initialize the TextView
+        usernameTextView = findViewById(R.id.tvtUsername);
+        // Initialize the TextView
 
         // Initial state
         updatePostButtonState();
@@ -108,15 +111,11 @@ public class PostActivity extends Activity {
         } else {
             usernameTextView.setText("Not logged in");
         }
-
-
-        // Nút Hủy
-        Button btnCancel = findViewById(R.id.btnCancel);
+        //Sự kiện nhấn nút quay trở về
+        ImageView btnCancel = findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(v -> {
-            // Quay trở lại trang NewsFeedActivity
-            Intent intent = new Intent(PostActivity.this, NewsFeedActivity.class);
-            startActivity(intent);
-            finish(); // Kết thúc Activity hiện tại
+                    Intent intent = new Intent(PostActivity.this, NewsFeedActivity.class);
+                    startActivity(intent);
         });
 
 
@@ -215,7 +214,7 @@ public class PostActivity extends Activity {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-//    private void postNewContent(String content, ArrayList<String> base64Images) {
+    //    private void postNewContent(String content, ArrayList<String> base64Images) {
 //        String postId = postsRef.push().getKey();
 //        if (postId == null) {
 //            Log.e("FirebaseError", "Không thể tạo postId");
@@ -249,59 +248,60 @@ public class PostActivity extends Activity {
 //                    Toast.makeText(this, "Lỗi khi đăng bài: " + e.getMessage(), Toast.LENGTH_LONG).show();
 //                });
 //    }
-private void postNewContent(String content, ArrayList<String> base64Images) {
-    String postId = postsRef.push().getKey();
-    if (postId == null) {
-        Log.e("FirebaseError", "Không thể tạo postId");
-        Toast.makeText(this, "Không thể tạo postId", Toast.LENGTH_SHORT).show();
-        return;
-    }
+    private void postNewContent(String content, ArrayList<String> base64Images) {
+        String postId = postsRef.push().getKey();
+        if (postId == null) {
+            Log.e("FirebaseError", "Không thể tạo postId");
+            Toast.makeText(this, "Không thể tạo postId", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    if (user == null) {
-        Toast.makeText(this, "Bạn chưa đăng nhập", Toast.LENGTH_SHORT).show();
-        return;
-    }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Bạn chưa đăng nhập", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    String userId = user.getUid();
+        String userId = user.getUid();
 
-    // Lấy username từ Realtime Database
-    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot snapshot) {
-            String username = "Unknown User"; // Giá trị mặc định
-            if (snapshot.exists() && snapshot.child("username").getValue() != null) {
-                username = snapshot.child("username").getValue(String.class);
+        // Lấy username từ Realtime Database
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String username = "Unknown User"; // Giá trị mặc định
+                if (snapshot.exists() && snapshot.child("username").getValue() != null) {
+                    username = snapshot.child("username").getValue(String.class);
+                }
+
+                // Tạo đối tượng bài viết
+                long timestamp = System.currentTimeMillis();
+                int likeCount = 0;
+                int commentCount = 0;
+
+                Post newPost = new Post(postId, username, content, timestamp, base64Images, likeCount, commentCount);
+
+                // Lưu bài viết lên Firebase
+                postsRef.child(postId).setValue(newPost)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(PostActivity.this, "Bài viết đã được đăng!", Toast.LENGTH_SHORT).show();
+                                // Chuyển hướng về NewsFeedActivity
+                                startActivity(new Intent(PostActivity.this, NewsFeedActivity.class));
+                                finish();
+                            } else {
+                                Log.e("FirebaseError", "Không thể đăng bài", task.getException());
+                                Toast.makeText(PostActivity.this, "Không thể đăng bài!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
 
-            // Tạo đối tượng bài viết
-            long timestamp = System.currentTimeMillis();
-            int likeCount = 0;
-            int commentCount = 0;
-
-            Post newPost = new Post(postId, username, content, timestamp, base64Images, likeCount, commentCount);
-            // Lưu bài viết lên Firebase
-            postsRef.child(postId).setValue(newPost)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(PostActivity.this, "Bài viết đã được đăng!", Toast.LENGTH_SHORT).show();
-                            // Chuyển hướng về NewsFeedActivity
-                            startActivity(new Intent(PostActivity.this, NewsFeedActivity.class));
-                            finish();
-                        } else {
-                            Log.e("FirebaseError", "Không thể đăng bài", task.getException());
-                            Toast.makeText(PostActivity.this, "Không thể đăng bài!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-
-        @Override
-        public void onCancelled(DatabaseError error) {
-            Toast.makeText(PostActivity.this, "Lỗi khi lấy thông tin người dùng", Toast.LENGTH_SHORT).show();
-        }
-    });
-}
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Toast.makeText(PostActivity.this, "Lỗi khi lấy thông tin người dùng", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void uploadImagesAndPost(String content) {
         Toast.makeText(this, "Uploading images...", Toast.LENGTH_SHORT).show();
@@ -331,5 +331,6 @@ private void postNewContent(String content, ArrayList<String> base64Images) {
             }
         }
     }
+
 
 }

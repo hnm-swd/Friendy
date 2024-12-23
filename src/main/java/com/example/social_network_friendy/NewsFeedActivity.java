@@ -4,18 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.social_network_friendy.databinding.ActivityNewsFeedBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.DataSnapshot;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,12 +29,42 @@ public class NewsFeedActivity extends Activity {
     private List<Post> postList;
     private DatabaseReference postsRef;
     private ActivityNewsFeedBinding binding;
+    private DatabaseReference usersRef; // Tham chiếu đến nút "users" trong Firebase
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityNewsFeedBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Initialize Firebase Auth và Database Reference
+        mAuth = FirebaseAuth.getInstance();
+        usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        // Lấy người dùng hiện tại
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            // Lấy tên từ Firebase Realtime Database
+            usersRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Lấy đối tượng User từ Firebase
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user != null) {
+                        // Gán tên vào TextView có ID "appTitle"
+                        binding.edtuser.setText(user.getUsername());
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Xử lý lỗi nếu không thể lấy dữ liệu
+                }
+            });
+        }
 
         // Initialize RecyclerView
         recyclerView = binding.postRecyclerView;
@@ -45,8 +77,6 @@ public class NewsFeedActivity extends Activity {
         // Initialize Firebase database reference
         postsRef = FirebaseDatabase.getInstance().getReference("posts");
 
-
-        // Query to get only the last 10 posts ordered by timestamp (ascending)
         Query query = postsRef.orderByChild("timestamp").limitToLast(10);
 
         // Add a ValueEventListener to get data from Firebase
@@ -78,14 +108,38 @@ public class NewsFeedActivity extends Activity {
         binding.goCreatePost.setOnClickListener(view -> {
             startActivity(new Intent(NewsFeedActivity.this, PostActivity.class));
         });
-        // Chuyển sang trang "Notification" khi nhấn nút yêu thích
-        binding.icFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(NewsFeedActivity.this, NotificationActivity.class);
-                startActivity(intent);
-            }
+
+        // click để vào trang MyProfile
+        ImageView myProfile = findViewById(R.id.myprofile);
+        findViewById(R.id.myprofile).setOnClickListener(v -> {
+            Intent intent = new Intent(NewsFeedActivity.this, MyProfileActivity.class);
+            startActivity(intent);
         });
+
+        //Sự kiện nhấn nút Home
+        findViewById(R.id.imgHome).setOnClickListener(v -> {
+            Intent intent = new Intent(NewsFeedActivity.this, NewsFeedActivity.class);
+            startActivity(intent);
+        });
+        //Sự kiện nhấn nút thêm bài viết
+        ImageView imgAdd = findViewById(R.id.imgAdd);
+        imgAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(NewsFeedActivity.this, PostActivity.class);
+            startActivity(intent);
+        });
+        //Sự kiện nhấn nút tìm kiếm
+        ImageView ImgSearch = findViewById(R.id.ImgSearch);
+        ImgSearch.setOnClickListener(v -> {
+            Intent intent = new Intent(NewsFeedActivity.this, Search.class);
+            startActivity(intent);
+        });
+        //Sự kiện nhấn nút hình trái tym
+        ImageView icFavorite = findViewById(R.id.icFavorite);
+        icFavorite.setOnClickListener(v -> {
+            Intent intent = new Intent(NewsFeedActivity.this, NotificationActivity.class);
+            startActivity(intent);
+        });
+
     }
 
     // Method to handle the addition of a new post to the list and update the feed
@@ -103,6 +157,7 @@ public class NewsFeedActivity extends Activity {
             fetchPosts();
         }
     }
+
 
     // Method to fetch posts from Firebase
     private void fetchPosts() {
@@ -155,5 +210,6 @@ public class NewsFeedActivity extends Activity {
 
         notificationsRef.push().setValue(notificationData);
     }
+
 
 }

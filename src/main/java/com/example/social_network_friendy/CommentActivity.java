@@ -1,8 +1,10 @@
 package com.example.social_network_friendy;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -10,75 +12,113 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-    public class CommentActivity extends AppCompatActivity {
-        private EditText commentEditText;
-        private Button btnSubmitComment;
-        private String postId;
-        private DatabaseReference commentsRef;
-        private DatabaseReference postRef;
+import java.util.ArrayList;
+import java.util.List;
 
+public class CommentActivity extends AppCompatActivity {
+    private EditText commentEditText;
+    private Button btnSubmitComment;
+    private RecyclerView commentsRecyclerView;
+    private CommentsAdapter commentsAdapter;
+    private List<Comment> commentList;
+    private String postId;
+    private DatabaseReference commentsRef;
+    private DatabaseReference postRef;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_comment);
+
+        commentList = new ArrayList<>();
+        commentsRef = FirebaseDatabase.getInstance().getReference("comments");// Define your layout here
+
+        // Initialize RecyclerView
+        commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        commentsAdapter = new CommentsAdapter(commentList);
+        commentsRecyclerView.setAdapter(commentsAdapter);
+
+        commentEditText = findViewById(R.id.commentEditText);
+        btnSubmitComment = findViewById(R.id.btnSubmitComment);
+        //Sự kiện nhấn nút quay trở về
+        ImageView ImgSearch = findViewById(R.id.imgbackmainscreen);
+        ImgSearch.setOnClickListener(v -> {
+                    Intent intent = new Intent(CommentActivity.this, NewsFeedActivity.class);
+                    startActivity(intent);
+        });
+        // Get the post ID from the Intent
+        postId = getIntent().getStringExtra("postId");
+        // Load comments from Firebase
+        loadComments(postId);
+        commentsRef = FirebaseDatabase.getInstance().getReference("comments");
+        postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId);
+        // Set up the button to submit the comment
+        btnSubmitComment.setOnClickListener(v -> submitComment());
+    }
+
+// tạo để có thể hiển thị bình luận lên trang comment
+private void loadComments(String postId) {
+    commentsRef.child(postId).addValueEventListener(new ValueEventListener() {
         @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_comment);  // Define your layout here
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            commentList.clear();  // Clear previous data
 
-            commentEditText = findViewById(R.id.commentEditText);
-            btnSubmitComment = findViewById(R.id.btnSubmitComment);
+            // Add comments to the list
+            for (DataSnapshot commentSnapshot : dataSnapshot.getChildren()) {
+                Comment comment = commentSnapshot.getValue(Comment.class);
+                commentList.add(comment);
+            }
 
-            // Get the post ID from the Intent
-            postId = getIntent().getStringExtra("postId");
-            commentsRef = FirebaseDatabase.getInstance().getReference("comments");
-            postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId);
-            // Set up the button to submit the comment
-            btnSubmitComment.setOnClickListener(v -> submitComment());
+            // Notify adapter that data has changed
+            commentsAdapter.notifyDataSetChanged();
         }
 
-//        private void submitComment(String postId, String commentText) {
-//            DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference("comments").child(postId);
-//
-//            String commentId = commentsRef.push().getKey();  // Generate a new ID for the comment
-//            if (commentId != null) {                Comment comment = new Comment(commentText, FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), System.currentTimeMillis());
-//                commentsRef.child(commentId).setValue(comment)
-//                        .addOnSuccessListener(aVoid -> {
-//                            Toast.makeText(CommentActivity.this, "Comment posted successfully!", Toast.LENGTH_SHORT).show();
-//                            finish(); // Optionally close activity after posting
-//                        })
-//                        .addOnFailureListener(e -> {
-//                            Toast.makeText(CommentActivity.this, "Failed to post comment: " + e.getMessage(), Toast.LENGTH_LONG).show();
-//                        });
-//            }
-//        }
-private void submitComment() {
-    String commentText =commentEditText.getText().toString().trim();
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Toast.makeText(CommentActivity.this, "Failed to load comments", Toast.LENGTH_SHORT).show();
+        }
+    });
+}
 
-    if (!commentText.isEmpty()) {
-        // Tạo đối tượng bình luận mới
-        String commentId = commentsRef.push().getKey(); // Tạo ID ngẫu nhiên cho bình luận
-        Comment newComment = new Comment(commentId, commentText, System.currentTimeMillis());
+    private void submitComment() {
+        String commentText =commentEditText.getText().toString().trim();
 
-        // Lưu bình luận vào Firebase
-        commentsRef.child(postId).child(commentId).setValue(newComment)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // Sau khi bình luận được lưu thành công, tăng số lượng comment của bài viết
-                        postRef.child("commentCount").get().addOnSuccessListener(snapshot -> {
-                            int currentCommentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
-                            postRef.child("commentCount").setValue(currentCommentCount + 1); // Tăng số lượt bình luận lên 1
-                        });
+        if (!commentText.isEmpty()) {
+            // Tạo đối tượng bình luận mới
+            String commentId = commentsRef.push().getKey(); // Tạo ID ngẫu nhiên cho bình luận
+            String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName(); // Lấy tên người dùng từ Firebase Auth
+            Comment newComment = new Comment(commentId, username, commentText, System.currentTimeMillis());
 
-                        // Trở lại MainHomeScreen sau khi bình luận thành công
-                        setResult(RESULT_OK);
-                        finish(); // Đóng CommentActivity
-                    } else {
-                        Toast.makeText(CommentActivity.this, "Không thể gửi bình luận!", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            // Lưu bình luận vào Firebase
+            commentsRef.child(postId).child(commentId).setValue(newComment)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // Sau khi bình luận được lưu thành công, tăng số lượng comment của bài viết
+                            postRef.child("commentCount").get().addOnSuccessListener(snapshot -> {
+                                int currentCommentCount = snapshot.exists() ? snapshot.getValue(Integer.class) : 0;
+                                postRef.child("commentCount").setValue(currentCommentCount + 1); // Tăng số lượt bình luận lên 1
+                            });
+
+                            commentEditText.setText(""); // Reset trường nhập liệu
+                            Toast.makeText(CommentActivity.this, "Bình luận đã được gửi!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(CommentActivity.this, "Không thể gửi bình luận!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Toast.makeText(this, "Vui lòng nhập nội dung bình luận!", Toast.LENGTH_SHORT).show();
+        }
     }
 }
-    }
-

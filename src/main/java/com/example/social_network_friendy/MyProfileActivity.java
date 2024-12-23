@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,18 +101,32 @@ public class MyProfileActivity extends Activity {
             Intent intent = new Intent(MyProfileActivity.this, EditProfileActivity.class);
             startActivity(intent);
         });
-        findViewById(R.id.icHome).setOnClickListener(v -> {
+        //
+        findViewById(R.id.imgHome).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, NewsFeedActivity.class);
             startActivity(intent);
+        });
+        //Sự kiện nhấn nút tìm kiếm
+        ImageView ImgSearch = findViewById(R.id.ImgSearch);
+        ImgSearch.setOnClickListener(v -> {
+                    Intent intent = new Intent(MyProfileActivity.this, Search.class);
+                    startActivity(intent);
         });
         findViewById(R.id.exit).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, LoginActivity.class);
             startActivity(intent);
         });
-        findViewById(R.id.post).setOnClickListener(v -> {
+        findViewById(R.id.imgAdd).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, PostActivity.class);
             startActivity(intent);
         });
+        //Sự kiện nhấn nút hình trái tym
+        ImageView icFavorite = findViewById(R.id.icFavorite);
+        icFavorite.setOnClickListener(v -> {
+            Intent intent = new Intent(MyProfileActivity.this, NotificationActivity.class);
+            startActivity(intent);
+        });
+
 
         avatarImageView.setOnClickListener(v -> chooseImage());
 
@@ -277,5 +292,4 @@ public class MyProfileActivity extends Activity {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 }
-
 

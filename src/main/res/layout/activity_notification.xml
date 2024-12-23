@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#FFFFFF">
-
 
     <!-- Tiêu đề Thông Báo -->
     <TextView
@@ -12,16 +10,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="THÔNG BÁO"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:padding="16dp"
-        android:textColor="#6D4C41"
+        android:textColor="@color/black"
         android:gravity="center"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="15dp" />
 
     <!-- Danh sách thông báo -->
     <ScrollView
+        android:id="@+id/notificationList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_above="@+id/navigationBar"
+        android:layout_below="@+id/titleText"
         android:fillViewport="true">
 
         <LinearLayout
@@ -41,8 +42,7 @@
                     android:id="@+id/userAvatar"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ava_user"/><!-- Avatar -->
-                <!--                android:layout_marginEnd="8dp" />-->
+                    android:src="@drawable/ava_user" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -79,49 +79,53 @@
             </LinearLayout>
 
             <!-- Thêm các thông báo khác -->
-            <!-- Lặp lại cấu trúc LinearLayout cho các thông báo khác -->
         </LinearLayout>
     </ScrollView>
 
     <!-- Thanh điều hướng dưới -->
     <LinearLayout
+        android:id="@+id/navigationBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_alignParentBottom="true"
         android:background="#F5F5F5"
+        android:gravity="center"
+        android:orientation="horizontal"
         android:padding="8dp">
 
         <ImageView
+            android:id="@+id/imgHome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/ic_home" /> <!-- Icon home -->
+            android:src="@drawable/ic_home" />
 
         <ImageView
+            android:id="@+id/ImgSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/ic_search" /> <!-- Icon search -->
+            android:src="@drawable/ic_search" />
 
         <ImageView
+            android:id="@+id/imgAdd"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/ic_add" /> <!-- Icon add -->
+            android:src="@drawable/ic_add" />
 
         <ImageView
             android:id="@+id/icFavorite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/ic_favorite" /> <!-- Icon heart -->
+            android:src="@drawable/ic_favorite" />
 
         <ImageView
+            android:id="@+id/myprofile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/ic_profile" /> <!-- Icon profile -->
+            android:src="@drawable/ic_profile" />
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

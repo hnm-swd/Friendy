@@ -3,16 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="1dp">
 
-    <!-- Toolbar or AppBar for navigation (optional) -->
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Post a Comment"
-        android:background="?attr/colorPrimary"
-        android:titleTextColor="@android:color/white"
-        android:elevation="4dp" />
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_marginTop="5dp"
+            android:id="@+id/imgbackmainscreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_mainscreen"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bình luận"
+            android:layout_marginLeft="110dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingBottom="8dp" />
+    </LinearLayout>
 
     <!-- EditText for the comment input -->
     <EditText
@@ -20,15 +33,16 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="16dp"
-        android:hint="Write your comment here..."
+        android:hint="Viết bình luận của bạn ở đây..."
         android:padding="12dp"
         android:gravity="top|start"
-        android:background="@android:drawable/edit_text"
+        android:background="@drawable/rounded_edittext"
         android:inputType="textMultiLine|textCapSentences"
         android:scrollbars="vertical"
         android:lineSpacingExtra="8dp"
         android:textColor="#000000"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
+
 
     <!-- Button to submit the comment -->
     <Button
@@ -36,10 +50,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Submit Comment"
-        android:textColor="@android:color/white"
-        android:background="@color/blue_500"
-        android:padding="12dp"/>
+        android:background="@drawable/custom_button_border"
+        android:padding="12dp"
+        android:textStyle="bold"
+        android:text="Gửi bình luận"
+        android:textColor="@android:color/black" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/commentsRecyclerView"
         android:layout_width="match_parent"

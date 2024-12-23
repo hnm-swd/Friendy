@@ -3,9 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:layout_marginBottom="8dp">
+    android:descendantFocusability="blocksDescendants"
+    android:padding="10dp">
 
     <!-- Tên người dùng và thời gian đăng -->
     <LinearLayout
@@ -26,7 +25,7 @@
             android:id="@+id/tvUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tên người dùng"
+            android:text="Tên user"
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="@color/black" />
@@ -46,7 +45,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="@android:color/black"
         android:layout_marginTop="8dp" />
 
     <!-- Hình ảnh bài viết -->
@@ -58,7 +56,7 @@
         android:scaleType="centerCrop"
         android:contentDescription="Post image"
         android:layout_marginBottom="10dp"
-        android:visibility="gone" /> <!-- Ẩn nếu không có ảnh -->
+        android:visibility="gone"/>
 
     <!-- Reactions (like, comment) -->
     <LinearLayout
@@ -74,33 +72,34 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_heart" />
+            android:src="@drawable/ic_heart"
+            android:clickable="true"
+            android:focusable="true"/>
 
         <TextView
             android:id="@+id/tvLikeCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textSize="14sp"
-            android:textColor="@android:color/black" />
+            android:textSize="14sp" />
 
         <!-- Comment icon -->
         <ImageView
             android:id="@+id/imgComment"
             android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_height="match_parent"
             android:layout_marginStart="16dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="4dp"
             android:src="@drawable/ic_comment" />
-
         <TextView
             android:id="@+id/tvCommentCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4"
-            android:textSize="14sp"
-            android:textColor="@android:color/black" />
-    </LinearLayout>
+            android:text="0"
+            android:textSize="14sp" />
 
+    </LinearLayout>
     <!-- Bình luận của người dùng -->
     <TextView
         android:id="@+id/commentsTextView"

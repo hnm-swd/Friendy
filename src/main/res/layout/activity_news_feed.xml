@@ -15,11 +15,13 @@
         android:paddingTop="30dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
-        app:contentPadding="5dp">
+        app:contentPadding="5dp"
+        android:background="@drawable/rounded_edittext">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
             <!-- Profile image -->
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imageView"
@@ -27,20 +29,28 @@
                 android:layout_height="40dp"
                 android:layout_margin="8dp"
                 android:src="@drawable/person_image" />
-
-            <!-- Button for writing a post -->
-            <TextView
-                android:id="@+id/goCreatePost"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@id/imageView"
-                android:background="@null"
-                android:padding="15dp"
-                android:text="Write something here..." />
-        </RelativeLayout>
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/edtuser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="Tên app"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/goCreatePost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Viết gì đó vào đây..." />
+            </LinearLayout>
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
     <!-- ScrollView containing the RecyclerView -->
@@ -55,46 +65,92 @@
             android:layout_height="wrap_content"/>
     </ScrollView>
 
-    <!-- Fixed Bottom Navigation Bar -->
-    <!-- Larger Bottom Navigation Bar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         android:background="#F5F5F5"
-        android:padding="2dp"
-        android:layout_alignParentBottom="true">
+        android:padding="8dp">
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:src="@drawable/ic_home" />
+        <ImageView
+            android:id="@+id/imgHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_home" /> <!-- Icon home -->
 
-    <ImageView
-        android:id="@+id/imgsearch"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:src="@drawable/ic_search" />
+        <ImageView
+            android:id="@+id/ImgSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_search" /> <!-- Icon search -->
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:src="@drawable/ic_add" /> <!-- Icon add -->
+        <ImageView
+            android:id="@+id/imgAdd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_add" /> <!-- Icon add -->
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:src="@drawable/ic_favorite" />
+        <ImageView
+            android:id="@+id/icFavorite"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_favorite" /> <!-- Icon heart -->
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:src="@drawable/ic_profile" />
-</LinearLayout>
+        <ImageView
+            android:id="@+id/myprofile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_profile" /> <!-- Icon profile -->
+    </LinearLayout>
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="45dp"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:gravity="center"-->
+<!--        android:background="#F5F5F5"-->
+<!--        android:padding="2dp"-->
+<!--        android:layout_alignParentBottom="true">-->
+<!--        -->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/ImgSearch-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:src="@drawable/ic_home" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/ImgSearch"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:src="@drawable/ic_search" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imgAdd"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:src="@drawable/ic_add" /> &lt;!&ndash; Icon add &ndash;&gt;-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/icFavorite"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:src="@drawable/ic_favorite" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/myprofile"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:src="@drawable/ic_profile" />-->
+<!--    </LinearLayout>-->
 </LinearLayout>

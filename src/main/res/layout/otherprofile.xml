@@ -21,7 +21,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/back"
-        android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="8dp" />
 
         <!-- Chữ "Quay lại" -->
         <TextView
@@ -34,76 +34,76 @@
     </LinearLayout>
 
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:gravity="center_vertical">-->
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:orientation="horizontal"-->
+    <!--        android:gravity="center_vertical">-->
 
-<!--        &lt;!&ndash; Tên người dùng &ndash;&gt;-->
-<!--        <TextView-->
-<!--            android:id="@+id/usernameTextView"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text="Tên người dùng"-->
-<!--            android:textSize="20sp"-->
-<!--            android:textStyle="bold"-->
-<!--            android:paddingTop="-10dp"/>-->
-<!--        <TextView-->
-<!--            android:id="@+id/bioTextView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:textColor="@android:color/black"-->
-<!--            android:visibility="gone" />-->
+    <!--        &lt;!&ndash; Tên người dùng &ndash;&gt;-->
+    <!--        <TextView-->
+    <!--            android:id="@+id/usernameTextView"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:text="Tên người dùng"-->
+    <!--            android:textSize="20sp"-->
+    <!--            android:textStyle="bold"-->
+    <!--            android:paddingTop="-10dp"/>-->
+    <!--        <TextView-->
+    <!--            android:id="@+id/bioTextView"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="8dp"-->
+    <!--            android:textColor="@android:color/black"-->
+    <!--            android:visibility="gone" />-->
 
-<!--        <TextView-->
-<!--            android:id="@+id/birthDateTextView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="4dp"-->
-<!--            android:textColor="@android:color/black"-->
-<!--            android:visibility="gone" />-->
+    <!--        <TextView-->
+    <!--            android:id="@+id/birthDateTextView"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="4dp"-->
+    <!--            android:textColor="@android:color/black"-->
+    <!--            android:visibility="gone" />-->
 
-<!--        <TextView-->
-<!--            android:id="@+id/locationTextView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="4dp"-->
-<!--            android:textColor="@android:color/black"-->
-<!--            android:visibility="gone" />-->
+    <!--        <TextView-->
+    <!--            android:id="@+id/locationTextView"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="4dp"-->
+    <!--            android:textColor="@android:color/black"-->
+    <!--            android:visibility="gone" />-->
 
-<!--&lt;!&ndash;        &lt;!&ndash; Ảnh đại diện hình tròn &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;        <ImageView&ndash;&gt;-->
-<!--&lt;!&ndash;            android:id="@+id/profileImage"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_width="60dp"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_height="60dp"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_gravity="end"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_marginStart="16dp"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:scaleType="centerCrop"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:src="@drawable/profileimage"&ndash;&gt;-->
-<!--&lt;!&ndash;            />&ndash;&gt;-->
-<!--        <de.hdodenhof.circleimageview.CircleImageView-->
-<!--                xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--                android:id="@+id/profileImage"-->
-<!--                android:layout_width="65dp"-->
-<!--                android:layout_height="60dp"-->
-<!--                android:layout_alignParentEnd="true"-->
+    <!--&lt;!&ndash;        &lt;!&ndash; Ảnh đại diện hình tròn &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;        <ImageView&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:id="@+id/profileImage"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_width="60dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_height="60dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_gravity="end"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:layout_marginStart="16dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:scaleType="centerCrop"&ndash;&gt;-->
+    <!--&lt;!&ndash;            android:src="@drawable/profileimage"&ndash;&gt;-->
+    <!--&lt;!&ndash;            />&ndash;&gt;-->
+    <!--        <de.hdodenhof.circleimageview.CircleImageView-->
+    <!--                xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--                android:id="@+id/profileImage"-->
+    <!--                android:layout_width="65dp"-->
+    <!--                android:layout_height="60dp"-->
+    <!--                android:layout_alignParentEnd="true"-->
 
-<!--                android:src="@drawable/profileimage"-->
+    <!--                android:src="@drawable/profileimage"-->
 
-<!--                />-->
-<!--    </LinearLayout>-->
+    <!--                />-->
+    <!--    </LinearLayout>-->
 
-<!--    &lt;!&ndash; Số người theo dõi &ndash;&gt;-->
-<!--    <TextView-->
-<!--        android:id="@+id/followersCount"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:text="1000 Followers"-->
-<!--        android:textSize="16sp" />-->
+    <!--    &lt;!&ndash; Số người theo dõi &ndash;&gt;-->
+    <!--    <TextView-->
+    <!--        android:id="@+id/followersCount"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="8dp"-->
+    <!--        android:text="1000 Followers"-->
+    <!--        android:textSize="16sp" />-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -68,6 +68,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             Log.e("PostAdapter", "Post is null at position: " + position);
             return;
         }
+        // Kiểm tra postId và userId không phải là null
+        final String postId = post.getPostId();
+        if (postId == null) {
+            Log.e("PostAdapter", "postId is null at position: " + position);
+            return;
+        }
+
+        final String userId = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        if (userId == null) {
+            Log.e("PostAdapter", "userId is null");
+            return;
+        }
 
         // Set user name
         holder.tvUsername.setText(post.getUsername() != null ? post.getUsername() : "Người dùng");
@@ -96,6 +108,28 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         // Set số lượng likes
         holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
+        // Kiểm tra trạng thái like của người dùng khi đăng nhập
+        final DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("likes");
+
+        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(userId)) {
+                    // Nếu người dùng đã like, cập nhật hình ảnh trái tim thành tim đầy
+                    holder.imgHeart.setImageResource(R.drawable.ic_heart_filled);
+                    post.setHasUserLiked(true);
+                } else {
+                    // Nếu người dùng chưa like, cập nhật hình ảnh trái tim thành tim rỗng
+                    holder.imgHeart.setImageResource(R.drawable.heart);
+                    post.setHasUserLiked(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("PostAdapter", "Failed to check like status: " + error.getMessage());
+            }
+        });
 
         // Set số lượng bình luận
         holder.tvCommentCount.setText(String.valueOf(post.getCommentCount()));
@@ -110,9 +144,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
         // Xử lý sự kiện click vào nút tim (like)
         holder.imgHeart.setOnClickListener(v -> {
-            String postId = post.getPostId();
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("likes");
+            // Xử lý khi người dùng nhấn like hoặc bỏ like
+//            DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId).child("likes");
 
             postRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -140,7 +173,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             .child("likeCount")
                             .setValue(post.getLikeCount());
 
-//                    // Cập nhật giao diện
+                    // Cập nhật giao diện
                     holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
                 }
 

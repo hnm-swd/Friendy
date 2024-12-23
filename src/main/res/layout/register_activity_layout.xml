@@ -2,81 +2,104 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
+    <!-- Logo -->
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="245dp"
-        android:src="@drawable/logo1" />
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:src="@drawable/logo1"
+        android:scaleType="fitCenter" />
 
+    <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:text="ĐĂNG KÍ"
         android:textColor="@color/black"
-        android:textSize="40dp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:layout_gravity="center"/>
+
+    <!-- Username EditText -->
     <EditText
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
         android:id="@+id/edtuser"
-        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:inputType="text"
         android:hint="Tên người dùng"
         android:textColor="#A8A6A7"
-        android:layout_marginLeft="50dp"/>
+        android:layout_marginTop="12dp"
+        android:paddingEnd="16dp"/>
+
+    <!-- Email EditText -->
     <EditText
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
         android:id="@+id/edtemail"
-        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:inputType="text"
         android:hint="Email"
         android:textColor="#A8A6A7"
-        android:layout_marginLeft="50dp"/>
+        android:layout_marginTop="12dp"
+        android:paddingEnd="16dp"/>
+
+    <!-- Password EditText -->
     <EditText
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
         android:id="@+id/edtpassword"
-        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:hint="Mật khẩu(8-20 kí tự)"
         android:textColor="#A8A6A7"
-        android:layout_marginLeft="50dp"
-        />
+        android:layout_marginTop="12dp"
+        android:paddingEnd="16dp"/>
+
+    <!-- Confirm Password EditText -->
     <EditText
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
         android:id="@+id/edtconfirmpassword"
-        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:hint="Xác nhận mật khẩu"
         android:textColor="#A8A6A7"
-        android:layout_marginLeft="50dp"
-        />
+        android:layout_marginTop="12dp"
+        android:paddingEnd="16dp"/>
 
+    <!-- Register Button -->
     <Button
-        android:layout_marginTop="20dp"
         android:id="@+id/btncreateaccount"
-        android:layout_width="120dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:text="Đăng kí"
+        android:gravity="center"
+        android:layout_gravity="right"
         android:textColor="@color/white"
         android:background="@drawable/shapebuttonlogin"
-        android:layout_marginLeft="150dp"
-        />
+        android:layout_marginTop="12dp" />
+
+    <!-- Already have an account -->
     <TableLayout
-        android:layout_marginLeft="125dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center">
         <TableRow>
             <TextView
                 android:textColor="#A8A6A7"
-                android:text="Đã có tài khoản?"/><TextView
-            />
+                android:text="Đã có tài khoản?"
+                android:textSize="14sp"/>
             <TextView
                 android:id="@+id/textlogin"
                 android:text=" Đăng nhập"
-                android:textStyle="bold"/>            />
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="14sp"/>
         </TableRow>
     </TableLayout>
+
 </LinearLayout>

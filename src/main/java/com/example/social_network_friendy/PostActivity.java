@@ -276,12 +276,11 @@ private void postNewContent(String content, ArrayList<String> base64Images) {
             }
 
             // Tạo đối tượng bài viết
-            String timeAgo = String.valueOf(System.currentTimeMillis());
+            long timestamp = System.currentTimeMillis();
             int likeCount = 0;
             int commentCount = 0;
 
-            Post newPost = new Post(postId, username, content, timeAgo, base64Images, likeCount, commentCount);
-
+            Post newPost = new Post(postId, username, content, timestamp, base64Images, likeCount, commentCount);
             // Lưu bài viết lên Firebase
             postsRef.child(postId).setValue(newPost)
                     .addOnCompleteListener(task -> {

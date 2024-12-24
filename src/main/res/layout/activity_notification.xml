@@ -4,128 +4,79 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <!-- Tiêu đề Thông Báo -->
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="THÔNG BÁO"
-        android:textSize="20sp"
-        android:padding="16dp"
-        android:textColor="@color/black"
-        android:gravity="center"
-        android:layout_marginTop="15dp" />
-
     <!-- Danh sách thông báo -->
-    <ScrollView
-        android:id="@+id/notificationList"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@+id/navigationBar"
-        android:layout_below="@+id/titleText"
-        android:fillViewport="true">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_above="@+id/navigationBar">
 
-        <LinearLayout
+        <!-- Tiêu đề Thông Báo -->
+        <TextView
+            android:id="@+id/titleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="THÔNG BÁO"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:textColor="#6D4C41"
+            android:layout_marginBottom="16dp"
+            android:padding="8dp" />
 
-            <!-- Item thông báo 1 -->
-            <LinearLayout
-                android:id="@+id/notificationContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
+        <!-- Container cho thông báo -->
+        <!-- RecyclerView cho thông báo -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-                <ImageView
-                    android:id="@+id/userAvatar"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ava_user" />
+    </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="5dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/usernameText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="art.dtm"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/commentText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Em ạ" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/likeIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_favorite" />
-
-                <TextView
-                    android:id="@+id/likeCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1" />
-            </LinearLayout>
-
-            <!-- Thêm các thông báo khác -->
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- Thanh điều hướng dưới -->
+    <!-- Thanh điều hướng cố định ở dưới cùng -->
     <LinearLayout
         android:id="@+id/navigationBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_height="80dp"
         android:background="#F5F5F5"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:layout_alignParentBottom="true">
 
         <ImageView
-            android:id="@+id/imgHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_home" />
+            android:id="@+id/icHome"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_home"
+            android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/ImgSearch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_search" />
+            android:id="@+id/icSearch"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_search"
+            android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/imgAdd"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_add" />
+            android:id="@+id/icAdd"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_add"
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/icFavorite"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_favorite" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_favorite"
+            android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/myprofile"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_profile" />
+            android:id="@+id/icMyProfile"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_profile"
+            android:layout_weight="1" />
     </LinearLayout>
 </RelativeLayout>

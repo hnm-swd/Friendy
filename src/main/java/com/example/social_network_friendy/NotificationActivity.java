@@ -1,96 +1,68 @@
 package com.example.social_network_friendy;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.view.LayoutInflater;
-import com.google.firebase.database.*;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class NotificationActivity extends Activity {
+import java.util.ArrayList;
+import java.util.List;
 
-    private DatabaseReference notificationsRef;
-    private LinearLayout notificationContainer;
+public class NotificationActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private NotificationAdapter adapter;
+    private List<Notification> notificationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
 
-        // click để vào trang MyProfile
-        ImageView myProfile = findViewById(R.id.myprofile);
-        findViewById(R.id.myprofile).setOnClickListener(v -> {
-            Intent intent = new Intent(NotificationActivity.this, MyProfileActivity.class);
-            startActivity(intent);
-        });
+        recyclerView = findViewById(R.id.recyclerViewNotifications);
+        notificationList = new ArrayList<>();
+        adapter = new NotificationAdapter(notificationList);
+        recyclerView.setAdapter(adapter);
 
-        //Sự kiện nhấn nút Home
-        findViewById(R.id.imgHome).setOnClickListener(v -> {
-            Intent intent = new Intent(NotificationActivity.this, NewsFeedActivity.class);
-            startActivity(intent);
-        });
-        //Sự kiện nhấn nút thêm bài viết
-        ImageView imgAdd = findViewById(R.id.imgAdd);
-        imgAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(NotificationActivity.this, PostActivity.class);
-            startActivity(intent);
-        });
-        //Sự kiện nhấn nút tìm kiếm
-        ImageView ImgSearch = findViewById(R.id.ImgSearch);
-        ImgSearch.setOnClickListener(v -> {
-            Intent intent = new Intent(NotificationActivity.this, Search.class);
-            startActivity(intent);
-        });
-        //Sự kiện nhấn nút hình trái tym
-        ImageView icFavorite = findViewById(R.id.icFavorite);
-        icFavorite.setOnClickListener(v -> {
-            Intent intent = new Intent(NotificationActivity.this, NotificationActivity.class);
-            startActivity(intent);
-        });
+        // Lấy user ID của người dùng đã đăng nhập
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        notificationContainer = findViewById(R.id.notificationContainer);
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (currentUser != null) {
-            String userId = currentUser.getUid();
-            notificationsRef = FirebaseDatabase.getInstance().getReference("notifications").child(userId);
-
-            // Lắng nghe sự thay đổi trong dữ liệu thông báo
-            notificationsRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    notificationContainer.removeAllViews();
-                    for (DataSnapshot notificationSnapshot : snapshot.getChildren()) {
-                        String username = notificationSnapshot.child("username").getValue(String.class);
-                        String message = notificationSnapshot.child("message").getValue(String.class);
-
-                        addNotificationToView(username, message);
-                    }
+        // Lắng nghe thay đổi trong notifications của người dùng
+        DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("Notifications").child(userId);
+        notificationsRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String previousChildName) {
+                Notification notification = dataSnapshot.getValue(Notification.class);
+                if (notification != null) {
+                    notificationList.add(notification); // Thêm thông báo vào danh sách
+                    adapter.notifyItemInserted(notificationList.size() - 1); // Cập nhật RecyclerView
                 }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    // Xử lý lỗi tại đây
-                }
-            });
-        }
-    }
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String previousChildName) {}
 
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
 
-    private void addNotificationToView(String username, String message) {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        LinearLayout notificationView = (LinearLayout) inflater.inflate(R.layout.item_notification, notificationContainer, false);
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String previousChildName) {}
 
-        TextView usernameTextView = notificationView.findViewById(R.id.usernameText);
-        TextView messageTextView = notificationView.findViewById(R.id.commentText);
-
-        usernameTextView.setText(username);
-        messageTextView.setText(message);
-
-        notificationContainer.addView(notificationView);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
     }
 }

@@ -5,37 +5,43 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
-    private List<NotificationItem> notificationList;
+    private List<Notification> notificationList;
 
-    public NotificationAdapter(List<NotificationItem> notificationList) {
+    public NotificationAdapter(List<Notification> notificationList) {
         this.notificationList = notificationList;
     }
 
     @NonNull
     @Override
     public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate layout cho mỗi item
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_notification, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notification, parent, false);
         return new NotificationViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NotificationViewHolder holder, int position) {
-        // Lấy đối tượng NotificationItem tương ứng với vị trí
-        NotificationItem notification = notificationList.get(position);
+        Notification notification = notificationList.get(position);
 
-        // Thiết lập giá trị cho các view trong item
-        holder.usernameTextView.setText(notification.getUsername());
-        holder.commentTextView.setText(notification.getComment());
-        holder.likeCountTextView.setText(String.valueOf(notification.getLikeCount()));
-        holder.avatarImageView.setImageResource(notification.getAvatarResId());
+        holder.tvMessage.setText(notification.getMessage());
+        holder.tvTimestamp.setText(notification.getTimestamp().toString());
+
+        // Tùy thuộc vào loại thông báo, bạn có thể thay đổi icon hoặc hành động
+        if ("like".equals(notification.getType())) {
+            holder.imgIcon.setImageResource(R.drawable.ic_favorite);  // Thay đổi theo loại thông báo
+        } else if ("comment".equals(notification.getType())) {
+            holder.imgIcon.setImageResource(R.drawable.ic_comment);
+        }
+//        } else if ("follow".equals(notification.getType())) {
+//            holder.imgIcon.setImageResource(R.drawable);
+//        }
     }
 
     @Override
@@ -43,19 +49,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return notificationList.size();
     }
 
-    // ViewHolder cho RecyclerView
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
-        public TextView usernameTextView, commentTextView, likeCountTextView;
-        public ImageView avatarImageView, likeIconImageView;
+
+        TextView tvMessage, tvTimestamp;
+        ImageView imgIcon;
 
         public NotificationViewHolder(View itemView) {
             super(itemView);
-            // Ánh xạ các view từ layout
-            usernameTextView = itemView.findViewById(R.id.usernameText);
-            commentTextView = itemView.findViewById(R.id.commentText);
-            likeCountTextView = itemView.findViewById(R.id.likeCount);
-            avatarImageView = itemView.findViewById(R.id.userAvatar);
-            likeIconImageView = itemView.findViewById(R.id.likeIcon);
+            tvMessage = itemView.findViewById(R.id.tvMessage);
+            tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
+            imgIcon = itemView.findViewById(R.id.imgAvatar);
         }
     }
 }

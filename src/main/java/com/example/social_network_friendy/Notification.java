@@ -3,14 +3,14 @@ public class Notification {
     private String type;       // Loại thông báo (like, comment, follow)
     private String message;    // Nội dung thông báo
     private String postId;     // ID bài viết
-    private String senderId;   // ID người gửi
+    private String username;   // ID người gửi
     private Object timestamp;  // Thời gian thông báo
 
-    public Notification(String type, String message, String postId, String senderId, Object timestamp) {
+    public Notification(String type, String message, String postId,String username, Object timestamp) {
         this.type = type;
         this.message = message;
         this.postId = postId;
-        this.senderId = senderId;
+        this.username = username;
         this.timestamp = timestamp;
     }
 
@@ -26,8 +26,8 @@ public class Notification {
         return postId;
     }
 
-    public String getSenderId() {
-        return senderId;
+    public String getUsername() {
+        return username;
     }
 
     public Object getTimestamp() {
@@ -46,9 +46,9 @@ public class Notification {
         this.postId = postId;
     }
 
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
-    }
+//    public void setSenderId(String senderId) {
+//        this.senderId = senderId;
+//    }
 
     public void setTimestamp(Object timestamp) {
         this.timestamp = timestamp;

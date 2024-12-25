@@ -1,10 +1,12 @@
 package com.example.social_network_friendy;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +15,11 @@ import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
+    private Context context;
     private List<Notification> notificationList;
 
     public NotificationAdapter(List<Notification> notificationList) {
+        this.context = context;
         this.notificationList = notificationList;
     }
 
@@ -23,12 +27,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notification, parent, false);
+        Log.d("NotificationAdapter", "Creating new view holder");
         return new NotificationViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NotificationViewHolder holder, int position) {
         Notification notification = notificationList.get(position);
+        Log.d("NotificationAdapter", "Size of notification list: " + notificationList.size());
 
         holder.tvMessage.setText(notification.getMessage());
         holder.tvTimestamp.setText(notification.getTimestamp().toString());
@@ -50,7 +56,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
-
+//        TextView tvNotificationContent, tvNotificationTime;
         TextView tvMessage, tvTimestamp;
         ImageView imgIcon;
 

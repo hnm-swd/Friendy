@@ -176,6 +176,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             .setValue(post.getLikeCount());
 //                     Gửi thông báo
                     sendLikeNotification(post);
+//                    // Chuyển đến trang thông báo
+//                    Intent intent = new Intent(context, NotificationActivity.class);
+//                    context.startActivity(intent);
                     // Cập nhật giao diện
                     holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
                 }
@@ -185,6 +188,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     Log.e("PostAdapter", "Failed to update likes: " + error.getMessage());
                 }
             });
+
+
         });
         // Xử lý sự kiện click vào biểu tượng bình luận
         holder.imgComment.setOnClickListener(v -> {
@@ -241,60 +246,95 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         String userId = currentUser.getUid(); // Lấy userId của người dùng hiện tại
-
-        // Kiểm tra nếu post.getUserId() là null
-        if (post.getUserId() == null) {
-            Log.e("PostAdapter", "Post userId is null, can't send like notification.");
-            return; // Dừng lại nếu không có userId trong bài viết
+        // Lấy userId của chủ bài viết
+        String postOwnerId = post.getUsername();
+        if (postOwnerId == null) {
+            Log.e("PostAdapter", "Post owner ID is null.");
+            return;
         }
+//
+//        // Kiểm tra nếu post.getUserId() là null
+//        if (post.getUsername() == null) {
+//            Log.e("PostAdapter", "Post userId is null, can't send like notification.");
+//            return; // Dừng lại nếu không có userId trong bài viết
+//        }
+        // Lấy username của người dùng hiện tại
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("username");
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String currentUsername = dataSnapshot.getValue(String.class);
+                if (currentUsername == null) {
+                    Log.e("PostAdapter", "Current username is null");
+                    return;
+                }
+//                // Gửi thông báo tới chủ bài viết
+//                DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications")
+//                        .child(post.getUsername());  // Gửi thông báo cho chủ bài viết
+                // Tạo thông báo
+                DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications").child(postOwnerId);
+                String notificationId = notificationsRef.push().getKey();
+                if (notificationId == null) {
+                    Log.e("PostAdapter", "Notification ID is null.");
+                    return; // Nếu notificationId là null, không thể tạo thông báo
+                }
 
-        // Gửi thông báo tới chủ bài viết
-        DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications")
-                .child(post.getUserId());  // Gửi thông báo cho chủ bài viết
+                Notification notification = new Notification(
+                        "like",  // Loại thông báo (like)
+                        currentUsername + " đã thích bài viết của bạn.", // Nội dung thông báo
+                        post.getPostId(),
+                        userId,
+                        ServerValue.TIMESTAMP  // Thời gian tạo thông báo
+                );
 
-        String notificationId = notificationsRef.push().getKey();
-        if (notificationId == null) {
-            Log.e("PostAdapter", "Notification ID is null.");
-            return; // Nếu notificationId là null, không thể tạo thông báo
-        }
+                notificationsRef.child(notificationId).setValue(notification)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("PostAdapter", "Like notification sent successfully.");
+                            } else {
+                                Log.e("PostAdapter", "Failed to send like notification: " + task.getException());
+                            }
+                        });
+            }
 
-        Notification notification = new Notification(
-                "like",  // Loại thông báo (like)
-                userId + " liked your post", // Nội dung thông báo
-                post.getPostId(),
-                userId,
-                ServerValue.TIMESTAMP  // Thời gian tạo thông báo
-        );
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("PostAdapter", "Failed to fetch current username: " + databaseError.getMessage());
+            }
+        });
 
-        notificationsRef.child(notificationId).setValue(notification)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("PostAdapter", "Like notification sent successfully.");
-                    } else {
-                        Log.e("PostAdapter", "Failed to send like notification: " + task.getException());
-                    }
-                });
+//        // Gửi thông báo tới chủ bài viết
+//        DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications")
+//                .child(post.getUsername());  // Gửi thông báo cho chủ bài viết
+//
+//        String notificationId = notificationsRef.push().getKey();
+//        if (notificationId == null) {
+//            Log.e("PostAdapter", "Notification ID is null.");
+//            return; // Nếu notificationId là null, không thể tạo thông báo
+//        }
+//
+//        Notification notification = new Notification(
+//                "like",  // Loại thông báo (like)
+//                userId + " liked your post", // Nội dung thông báo
+//                post.getPostId(),
+//                userId,
+//                ServerValue.TIMESTAMP  // Thời gian tạo thông báo
+//        );
+//
+//        notificationsRef.child(notificationId).setValue(notification)
+//                .addOnCompleteListener(task -> {
+//                    if (task.isSuccessful()) {
+//                        Log.d("PostAdapter", "Like notification sent successfully.");
+//                    } else {
+//                        Log.e("PostAdapter", "Failed to send like notification: " + task.getException());
+//                    }
+//                });
     }
 
 
 
 
 
-//    private void sendCommentNotification(Post post) {
-//        DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications")
-//                .child(post.getUserId());  // Gửi thông báo cho chủ bài viết
-//
-//        String notificationId = notificationsRef.push().getKey();
-//        Notification notification = new Notification(
-//                "comment",  // Loại thông báo
-//                FirebaseAuth.getInstance().getCurrentUser().getUid() + " commented on your post",
-//                post.getPostId(),
-//                FirebaseAuth.getInstance().getCurrentUser().getUid(),
-//                ServerValue.TIMESTAMP  // Thời gian tạo thông báo
-//        );
-//
-//        notificationsRef.child(notificationId).setValue(notification);
-//    }
 
     // Trả về số lượng bài viết
     @Override

@@ -77,7 +77,6 @@ public class MyProfileActivity extends Activity {
 
                     if (username != null && !username.isEmpty()) {
                         usernameTextView.setText(username);
-//                        fetchPostsForUser(username);
                         fetchPosts(username);
                         loadFollowersCount(username);
                     } else {
@@ -102,7 +101,7 @@ public class MyProfileActivity extends Activity {
             Intent intent = new Intent(MyProfileActivity.this, EditProfileActivity.class);
             startActivity(intent);
         });
-        findViewById(R.id.icHome).setOnClickListener(v -> {
+        findViewById(R.id.imgHome).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, NewsFeedActivity.class);
             startActivity(intent);
         });
@@ -110,7 +109,7 @@ public class MyProfileActivity extends Activity {
             Intent intent = new Intent(MyProfileActivity.this, LoginActivity.class);
             startActivity(intent);
         });
-        findViewById(R.id.post).setOnClickListener(v -> {
+        findViewById(R.id.imgAdd).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, PostActivity.class);
             startActivity(intent);
         });
@@ -357,5 +356,4 @@ public class MyProfileActivity extends Activity {
 
 
 }
-
 

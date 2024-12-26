@@ -2,7 +2,6 @@ package com.example.social_network_friendy;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,11 +11,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.DateUtils;
+
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -51,6 +52,7 @@ public class PostActivity extends Activity {
 
     private static final int STORAGE_PERMISSION_REQUEST = 1;
     private static final int IMAGE_PICK_REQUEST = 2;
+    private static final int MAX_IMAGES = 5; // Tối đa 5 ảnh
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,10 +224,16 @@ public class PostActivity extends Activity {
         if (requestCode == IMAGE_PICK_REQUEST && resultCode == RESULT_OK) {
             if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount();
+                if (count > MAX_IMAGES) {
+                    Toast.makeText(this, "Bạn chỉ có thể chọn tối đa 5 ảnh!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                imageUris.clear(); // Clear previous selection
                 for (int i = 0; i < count; i++) {
                     Uri imageUri = data.getClipData().getItemAt(i).getUri();
                     imageUris.add(imageUri);
-                    addImageToContainer(imageUri);
+                    updateImageContainer(imageUri);
                 }
             } else if (data.getData() != null) {
                 Uri imageUri = data.getData();
@@ -233,6 +241,45 @@ public class PostActivity extends Activity {
                 addImageToContainer(imageUri);
             }
             updatePostButtonState(); // Cập nhật trạng thái nút
+        }
+    }
+
+    private void updateImageContainer(Uri imageUri) {
+        imageContainer.removeAllViews(); // Clear the container first
+
+        for (Uri uri : imageUris) {
+            // Create a FrameLayout for each image
+            FrameLayout frameLayout = new FrameLayout(this);
+            frameLayout.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+            frameLayout.setPadding(8, 8, 8, 8);
+
+            // Create an ImageView for the selected image
+            ImageView imageView = new ImageView(this);
+            imageView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            imageView.setImageURI(uri);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            // Create an ImageView for the "X" remove button
+            ImageView removeImageView = new ImageView(this);
+            FrameLayout.LayoutParams removeParams = new FrameLayout.LayoutParams(30, 30);
+            removeParams.topMargin = 0;
+            removeParams.rightMargin = 0;
+            removeParams.gravity = Gravity.TOP | Gravity.END; // Position "X" at the top right corner
+            removeImageView.setLayoutParams(removeParams);
+            removeImageView.setImageResource(R.drawable.close); // "X" icon
+
+            // Set click listener for remove button
+            removeImageView.setOnClickListener(v -> {
+                imageUris.remove(uri); // Remove the selected image
+                updateImageContainer(null); // Rebuild the container to reflect updated image list
+            });
+
+            // Add the image and the "X" remove button to the frame layout
+            frameLayout.addView(imageView);
+            frameLayout.addView(removeImageView);
+
+            // Add the frame layout to the container
+            imageContainer.addView(frameLayout);
         }
     }
 
@@ -245,21 +292,21 @@ public class PostActivity extends Activity {
 
         imageContainer.addView(imageView);
     }
-
-    private String encodeBitmapToBase64(Bitmap bitmap) {
-        if (bitmap == null) {
-            return null;
-        }
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
-    private Bitmap decodeBase64ToBitmap(String base64String) {
-        byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-    }
+//
+//    private String encodeBitmapToBase64(Bitmap bitmap) {
+//        if (bitmap == null) {
+//            return null;
+//        }
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+//        byte[] byteArray = byteArrayOutputStream.toByteArray();
+//        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+//    }
+//
+//    private Bitmap decodeBase64ToBitmap(String base64String) {
+//        byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
+//        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+//    }
 
     private void postNewContent(String content, ArrayList<String> base64Images) {
         String postId = postsRef.push().getKey();
@@ -344,6 +391,14 @@ public class PostActivity extends Activity {
             }
         }
     }
+
+    private String encodeBitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
 
 
 }

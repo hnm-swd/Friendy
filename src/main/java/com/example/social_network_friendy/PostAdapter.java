@@ -181,9 +181,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             .setValue(post.getLikeCount());
 //                     Gửi thông báo
                     sendLikeNotification(post);
-//                    // Chuyển đến trang thông báo
-//                    Intent intent = new Intent(context, NotificationActivity.class);
-//                    context.startActivity(intent);
                     // Cập nhật giao diện
                     holder.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
                 }
@@ -198,25 +195,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
 
 
-//        // xử lý sự kiến nhấn vào dòng chữ phía dưới
-//        holder.commentsTextView.setOnClickListener(v -> {
-//            // Log cho việc debug
-//            Log.d("PostAdapter", "Comments clicked for post: " + post.getPostId());
-//
-//            // Tạo Intent để mở CommentActivity
-//            Intent intent = new Intent(context, CommentActivity.class);
-//            intent.putExtra("postId", post.getPostId()); // Truyền postId vào CommentActivity
-//            ((Activity) context).startActivityForResult(intent, 1); // Mở Activity và nhận kết quả từ Activity
-//        });if (holder.commentsTextView != null) {
-//            holder.commentsTextView.setOnClickListener(v -> {
-//                Intent intent = new Intent(context, CommentActivity.class);
-//                intent.putExtra("postId", post.getPostId()); // Truyền postId
-//                ((Activity) context).startActivityForResult(intent, 1);
-//            });
-//        } else {
-//            Log.e("PostAdapter", "commentsTextView is null in onBindViewHolder");
-//        }
-
         // Xử lý sự kiện click vào biểu tượng bình luận
         holder.imgComment.setOnClickListener(v -> {
             Log.d("PostAdapter", "Comment clicked for post: " + post.getPostId());
@@ -226,8 +204,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             intent.putExtra("postId", post.getPostId()); // Truyền postId sang CommentActivity
             context.startActivity(intent); // Bắt đầu activity
 
-            // Gửi thông báo
-//            sendCommentNotification(post);
         });
 
         holder.tvUsername.setOnClickListener(v -> {

@@ -64,7 +64,7 @@ public class Search extends Activity {
 
         // Quay lại màn hình chính
         imgmainscreen.setOnClickListener(view -> {
-            Intent intentmainscreen = new Intent(Search.this, MainActivityScreen.class);
+            Intent intentmainscreen = new Intent(Search.this, NewsFeedActivity.class);
             startActivity(intentmainscreen);
         });
 

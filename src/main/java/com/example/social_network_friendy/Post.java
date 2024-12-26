@@ -29,6 +29,7 @@ public class Post {
 
     @PropertyName("getTimestamp")
     private long timestamp;
+    private String userId;
 
     // Constructor
     public Post(String postId,String username, String content, long timestamp, List<String> imageBase64, int likeCount, int commentCount) {
@@ -39,6 +40,7 @@ public class Post {
         this.imageBase64 = imageBase64;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
+
     }
     public Post() {
         // Constructor mặc định cho Firebase
@@ -51,6 +53,10 @@ public class Post {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+//    public String getUserId(){
+//        return userId;
+//    }
+//    public void setUserId(String userId){ this.userId = userId;}
     public String getPostId() {
         return postId;
     }

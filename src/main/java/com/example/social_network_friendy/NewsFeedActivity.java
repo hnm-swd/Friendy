@@ -2,7 +2,11 @@ package com.example.social_network_friendy;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,6 +55,7 @@ public class NewsFeedActivity extends Activity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             String userId = currentUser.getUid();
+            
 
             // Lấy tên từ Firebase Realtime Database
             usersRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -74,8 +79,10 @@ public class NewsFeedActivity extends Activity {
                     // Xử lý lỗi nếu không thể lấy dữ liệu
                 }
             });
-        }
+            // Tải avatar người dùng
+            loadUserAvatar(userId); // thêm đoạn ni để lấy avatar
 
+        }
         // Initialize RecyclerView
         recyclerView = binding.postRecyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -149,13 +156,42 @@ public class NewsFeedActivity extends Activity {
             Intent intent = new Intent(NewsFeedActivity.this, NotificationActivity.class);
             startActivity(intent);
         });
-        ///
-//        Intent intent = new Intent(NewsFeedActivity.this, CommentActivity.class);
-//        intent.putExtra("username", username);  // Gửi username từ Firebase
-//        startActivity(intent);
 
     }
 
+    // đoạn load ảnh avatar lên
+    private void loadUserAvatar(String userId) {
+        DatabaseReference avatarRef = FirebaseDatabase.getInstance().getReference("avatars").child(userId);
+        avatarRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String avatarBase64 = snapshot.child("avatar").getValue(String.class);
+                if (avatarBase64 != null && !avatarBase64.isEmpty()) {
+                    Bitmap avatarBitmap = decodeBase64ToBitmap(avatarBase64);
+                    binding.avatarImageView.setImageBitmap(avatarBitmap); // Set the avatar to your ImageView
+                } else {
+                    binding.avatarImageView.setImageResource(R.drawable.img_profile_avatar); // Default avatar
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("NewsFeedActivity", "Failed to load avatar from Firebase: " + error.getMessage());
+            }
+        });
+    }
+
+    // Helper method to decode a Base64 string to a Bitmap
+    private Bitmap decodeBase64ToBitmap(String base64String) {
+        try {
+            byte[] decodedString = Base64.decode(base64String, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+///tới đây là hết nè
     // Method to handle the addition of a new post to the list and update the feed
     public void addNewPost(Post post) {
         // Add the new post at the beginning of the list (top of the feed)
@@ -224,5 +260,7 @@ public class NewsFeedActivity extends Activity {
 
         notificationsRef.push().setValue(notificationData);
     }
+
+
 
 }

@@ -67,7 +67,7 @@ public class PostActivity extends Activity {
         imageContainer = findViewById(R.id.imageContainer);
         usernameTextView = findViewById(R.id.tvtUsername);
         // Initialize the TextView
-
+        loadAvatar(); // thêm dòng ni để load ảnh từ firebase
         // Initial state
         updatePostButtonState();
 
@@ -142,6 +142,53 @@ public class PostActivity extends Activity {
         });
     }
 
+    //  Dòng ni để thêm avatar
+    private void loadAvatar() {
+        // Lấy UID của người dùng hiện tại từ FirebaseAuth
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Người dùng chưa đăng nhập", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String userId = user.getUid();
+
+        // Truy cập nhánh "avatars" để lấy avatar của người dùng
+        DatabaseReference avatarRef = FirebaseDatabase.getInstance()
+                .getReference("avatars")
+                .child(userId);
+
+        avatarRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String avatarBase64 = snapshot.child("avatar").getValue(String.class);
+
+                    if (avatarBase64 != null && !avatarBase64.isEmpty()) {
+                        // Giải mã chuỗi Base64 thành Bitmap
+                        byte[] decodedString = Base64.decode(avatarBase64, Base64.DEFAULT);
+                        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                        // Hiển thị ảnh avatar trên ImageView
+                        ((ImageView) findViewById(R.id.avatarImageView)).setImageBitmap(decodedBitmap);
+                    } else {
+                        // Nếu không có dữ liệu avatar, hiển thị hình mặc định
+                        ((ImageView) findViewById(R.id.avatarImageView)).setImageResource(R.drawable.img_profile_avatar);
+                    }
+                } else {
+                    // Nếu không tìm thấy thông tin avatar
+                    ((ImageView) findViewById(R.id.avatarImageView)).setImageResource(R.drawable.img_profile_avatar);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(PostActivity.this, "Lỗi khi tải avatar", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    // đoạn trên là lấy ảnh.
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -214,40 +261,6 @@ public class PostActivity extends Activity {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    //    private void postNewContent(String content, ArrayList<String> base64Images) {
-//        String postId = postsRef.push().getKey();
-//        if (postId == null) {
-//            Log.e("FirebaseError", "Không thể tạo postId");
-//            Toast.makeText(this, "Không thể tạo postId", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        String username = (user != null) ? user.getDisplayName() : "Unknown User";
-//        String timeAgo = DateUtils.getRelativeTimeSpanString(System.currentTimeMillis()).toString();
-//        int likeCount = 0;
-//        int commentCount = 0;
-//
-//        Post newPost = new Post(postId, username, content, timeAgo, base64Images, likeCount, commentCount);
-//
-//        postsRef.child(postId).setValue(newPost)
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        Toast.makeText(this, "Bài viết đã được đăng!", Toast.LENGTH_SHORT).show();
-//                        // Redirect to NewsFeedActivity after successful post
-//                        Intent intent = new Intent(PostActivity.this, NewsFeedActivity.class);
-//                        startActivity(intent);
-//                        finish();
-//                    } else {
-//                        Log.e("FirebaseError", "Không thể đăng bài", task.getException());
-//                        Toast.makeText(this, "Không thể đăng bài!", Toast.LENGTH_SHORT).show();
-//                    }
-//                })
-//                .addOnFailureListener(e -> {
-//                    Log.e("FirebaseError", "Lỗi khi đăng bài", e);
-//                    Toast.makeText(this, "Lỗi khi đăng bài: " + e.getMessage(), Toast.LENGTH_LONG).show();
-//                });
-//    }
     private void postNewContent(String content, ArrayList<String> base64Images) {
         String postId = postsRef.push().getKey();
         if (postId == null) {

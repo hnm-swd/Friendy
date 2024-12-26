@@ -5,6 +5,8 @@ import static androidx.core.content.ContextCompat.startActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
@@ -29,6 +31,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
@@ -191,6 +196,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
 
         });
+
+
+//        // xử lý sự kiến nhấn vào dòng chữ phía dưới
+//        holder.commentsTextView.setOnClickListener(v -> {
+//            // Log cho việc debug
+//            Log.d("PostAdapter", "Comments clicked for post: " + post.getPostId());
+//
+//            // Tạo Intent để mở CommentActivity
+//            Intent intent = new Intent(context, CommentActivity.class);
+//            intent.putExtra("postId", post.getPostId()); // Truyền postId vào CommentActivity
+//            ((Activity) context).startActivityForResult(intent, 1); // Mở Activity và nhận kết quả từ Activity
+//        });if (holder.commentsTextView != null) {
+//            holder.commentsTextView.setOnClickListener(v -> {
+//                Intent intent = new Intent(context, CommentActivity.class);
+//                intent.putExtra("postId", post.getPostId()); // Truyền postId
+//                ((Activity) context).startActivityForResult(intent, 1);
+//            });
+//        } else {
+//            Log.e("PostAdapter", "commentsTextView is null in onBindViewHolder");
+//        }
+
         // Xử lý sự kiện click vào biểu tượng bình luận
         holder.imgComment.setOnClickListener(v -> {
             Log.d("PostAdapter", "Comment clicked for post: " + post.getPostId());
@@ -235,6 +261,48 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 }
             });
         });
+
+        // Load avatar
+        String username = post.getUsername();
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        usersRef.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Lấy userId từ dữ liệu người dùng
+                    String userId = snapshot.getChildren().iterator().next().getKey(); // Lấy key của người dùng từ Firebase
+
+                    // Truy vấn ảnh avatar từ Firebase
+                    DatabaseReference avatarRef = FirebaseDatabase.getInstance().getReference("avatars").child(userId);
+                    avatarRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String avatarBase64 = snapshot.child("avatar").getValue(String.class);
+                            if (avatarBase64 != null && !avatarBase64.isEmpty()) {
+                                // Chuyển base64 thành Bitmap và hiển thị
+                                Bitmap avatarBitmap = decodeBase64ToBitmap(avatarBase64);
+                                holder.avatarImageView.setImageBitmap(avatarBitmap);
+                            } else {
+                                // Nếu không có avatar, dùng ảnh mặc định
+                                holder.avatarImageView.setImageResource(R.drawable.img_profile_avatar);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("PostAdapter", "Failed to load avatar from Firebase: " + error.getMessage());
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("PostAdapter", "Failed to load userId: " + error.getMessage());
+            }
+        });
+
 
     }
     private void sendLikeNotification(Post post) {
@@ -329,6 +397,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 //                        Log.e("PostAdapter", "Failed to send like notification: " + task.getException());
 //                    }
 //                });
+
     }
 
 
@@ -357,9 +426,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     // ViewHolder để đại diện cho mỗi bài viết
     public static class PostViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvUsername, tvTime, tvContent, tvLikeCount, tvCommentCount;
+        TextView tvUsername, tvTime, tvContent, tvLikeCount, tvCommentCount, commentsTextView;
         ImageView imgPost, imgHeart, imgComment;
-
+        CircleImageView avatarImageView;
         public PostViewHolder(View itemView) {
             super(itemView);
             tvUsername = itemView.findViewById(R.id.tvUsername);
@@ -370,10 +439,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             imgPost = itemView.findViewById(R.id.imgPost);
             imgHeart = itemView.findViewById(R.id.imgHeart);
             imgComment = itemView.findViewById(R.id.imgComment);
+            avatarImageView = itemView.findViewById(R.id.avatarImageView);
 
             if (tvUsername == null || tvContent == null || imgPost == null) {
                 Log.e("PostViewHolder", "Error inflating View, check post_item.xml");
             }
+        }
+    }
+    private Bitmap decodeBase64ToBitmap(String base64String) {
+        try {
+            byte[] decodedString = Base64.decode(base64String, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

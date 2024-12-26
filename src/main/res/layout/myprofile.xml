@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MyProfileActivity">
     <!-- Nút Exit nằm ở góc bên phải -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp">
 
         <ImageView
             android:id="@+id/exit"
@@ -18,7 +20,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/exit"
             android:layout_alignParentEnd="true"
-            android:paddingBottom="10dp"/> <!-- Sử dụng layout_alignParentEnd để căn phải -->
+            android:paddingBottom="16dp"/> <!-- Sử dụng layout_alignParentEnd để căn phải -->
 
     </RelativeLayout>
 
@@ -26,7 +28,11 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+
+        >
 
         <LinearLayout
             android:id="@+id/userInfoLayout"
@@ -39,7 +45,6 @@
                 android:id="@+id/usernameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
                 android:text="Tên app"
                 android:textColor="@color/black"
@@ -95,27 +100,34 @@
         android:id="@+id/editProfileButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:text="Chỉnh sửa trang cá nhân"
         android:textStyle="bold"
-        android:background="@drawable/custom_button_border" />
+        android:background="@drawable/custom_button_border"
+        />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
-        android:background="@android:color/black" />
+        android:background="@android:color/black"
+        android:layout_margin="16dp"/>
 
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/postRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            />
     </ScrollView>
 
     <!-- Fixed Bottom Navigation Bar -->
@@ -165,4 +177,6 @@
             android:layout_weight="1"
             android:src="@drawable/ic_profile" />
     </LinearLayout>
+
 </LinearLayout>
+

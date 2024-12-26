@@ -1,7 +1,5 @@
 package com.example.social_network_friendy;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,9 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -100,9 +102,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         // Hiển thị hình ảnh bài viết (nếu có)
         if (post.getImageBase64() != null && !post.getImageBase64().isEmpty()) {
             holder.imgPost.setVisibility(View.VISIBLE);
+            holder.cardView.setVisibility(View.VISIBLE);
             try {
                 Glide.with(holder.itemView.getContext())
                         .load(Base64.decode(post.getImageBase64().get(0), Base64.DEFAULT)) // Chỉ lấy hình ảnh đầu tiên
+                        .apply(new RequestOptions()
+                                .transform(new CenterCrop(), new RoundedCorners(20))) // Bo góc 30dp
                         .override(500, 500) // Resize ảnh thành 500x500
                         .into(holder.imgPost);
             } catch (Exception e) {
@@ -111,6 +116,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
         } else {
             holder.imgPost.setVisibility(View.GONE); // Ẩn ảnh nếu không có ảnh
+            holder.cardView.setVisibility(View.GONE); // Ẩn cả CardView nếu không có ảnh
         }
 
         // Set số lượng likes
@@ -340,45 +346,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             }
                         });
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("PostAdapter", "Failed to fetch current username: " + databaseError.getMessage());
             }
         });
-
-//        // Gửi thông báo tới chủ bài viết
-//        DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications")
-//                .child(post.getUsername());  // Gửi thông báo cho chủ bài viết
-//
-//        String notificationId = notificationsRef.push().getKey();
-//        if (notificationId == null) {
-//            Log.e("PostAdapter", "Notification ID is null.");
-//            return; // Nếu notificationId là null, không thể tạo thông báo
-//        }
-//
-//        Notification notification = new Notification(
-//                "like",  // Loại thông báo (like)
-//                userId + " liked your post", // Nội dung thông báo
-//                post.getPostId(),
-//                userId,
-//                ServerValue.TIMESTAMP  // Thời gian tạo thông báo
-//        );
-//
-//        notificationsRef.child(notificationId).setValue(notification)
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        Log.d("PostAdapter", "Like notification sent successfully.");
-//                    } else {
-//                        Log.e("PostAdapter", "Failed to send like notification: " + task.getException());
-//                    }
-//                });
-
     }
-
-
-
-
 
 
     // Trả về số lượng bài viết
@@ -405,6 +378,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView tvUsername, tvTime, tvContent, tvLikeCount, tvCommentCount, commentsTextView;
         ImageView imgPost, imgHeart, imgComment;
         CircleImageView avatarImageView;
+        CardView cardView;
         public PostViewHolder(View itemView) {
             super(itemView);
             tvUsername = itemView.findViewById(R.id.tvUsername);
@@ -416,6 +390,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             imgHeart = itemView.findViewById(R.id.imgHeart);
             imgComment = itemView.findViewById(R.id.imgComment);
             avatarImageView = itemView.findViewById(R.id.avatarImageView);
+            cardView = itemView.findViewById(R.id.cardViewPost);
 
             if (tvUsername == null || tvContent == null || imgPost == null) {
                 Log.e("PostViewHolder", "Error inflating View, check post_item.xml");

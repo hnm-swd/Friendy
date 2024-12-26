@@ -1,6 +1,7 @@
 package com.example.social_network_friendy;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,7 +11,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +39,7 @@ public class MyProfileActivity extends Activity {
     private PostAdapter postAdapter;
     private List<Post> postList;
     private DatabaseReference postsRef;
-
+    private Bitmap avatarBitmap;
     private TextView usernameTextView;
     private TextView followersCountTextView;
     private CircleImageView avatarImageView;
@@ -53,7 +53,6 @@ public class MyProfileActivity extends Activity {
         // Firebase references
         postsRef = FirebaseDatabase.getInstance().getReference("posts");
 
-        // Initialize UI elements
         recyclerView = findViewById(R.id.postRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -101,36 +100,38 @@ public class MyProfileActivity extends Activity {
             Intent intent = new Intent(MyProfileActivity.this, EditProfileActivity.class);
             startActivity(intent);
         });
-        //
-        findViewById(R.id.imgHome).setOnClickListener(v -> {
+        findViewById(R.id.icHome).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, NewsFeedActivity.class);
             startActivity(intent);
-        });
-        //Sự kiện nhấn nút tìm kiếm
-        ImageView ImgSearch = findViewById(R.id.ImgSearch);
-        ImgSearch.setOnClickListener(v -> {
-                    Intent intent = new Intent(MyProfileActivity.this, Search.class);
-                    startActivity(intent);
         });
         findViewById(R.id.exit).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, LoginActivity.class);
             startActivity(intent);
         });
-        findViewById(R.id.imgAdd).setOnClickListener(v -> {
+        findViewById(R.id.post).setOnClickListener(v -> {
             Intent intent = new Intent(MyProfileActivity.this, PostActivity.class);
             startActivity(intent);
         });
-        //Sự kiện nhấn nút hình trái tym
-        ImageView icFavorite = findViewById(R.id.icFavorite);
-        icFavorite.setOnClickListener(v -> {
-            Intent intent = new Intent(MyProfileActivity.this, NotificationActivity.class);
-            startActivity(intent);
-        });
-
 
         avatarImageView.setOnClickListener(v -> chooseImage());
 
         loadUserProfile();
+        avatarImageView.setOnClickListener(v -> {
+            // Tạo một hộp thoại với hai tùy chọn
+            AlertDialog.Builder builder = new AlertDialog.Builder(MyProfileActivity.this);
+            builder.setTitle("Choose an option")
+                    .setItems(new CharSequence[]{"Choose new avatar", "Remove avatar"}, (dialog, which) -> {
+                        switch (which) {
+                            case 0: // Chọn ảnh mới
+                                chooseImage();
+                                break;
+                            case 1: // Gỡ ảnh avatar
+                                removeAvatar();
+                                break;
+                        }
+                    })
+                    .show();
+        });
     }
 
     private void loadFollowersCount(String username) {
@@ -168,7 +169,7 @@ public class MyProfileActivity extends Activity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(MyProfileActivity.this, "Error loading posts: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyProfileActivity.this, "" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -246,10 +247,59 @@ public class MyProfileActivity extends Activity {
             });
         }
     }
+    private void updatePostsAvatar(String avatarBase64) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("posts");
+
+            // Update all posts for the current user
+            postsRef.orderByChild("username").equalTo(user.getDisplayName()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        // Get the post ID and update the avatar
+                        String postId = postSnapshot.getKey();
+                        postsRef.child(postId).child("avatar").setValue(avatarBase64);
+                    }
+
+                    // Sau khi cập nhật avatar cho tất cả các bài đăng, làm mới lại RecyclerView
+                    postAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(MyProfileActivity.this, "Failed to update posts' avatar", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
 
     private void chooseImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    private void removeAvatar() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Xóa avatar trong Firebase
+            DatabaseReference avatarRef = FirebaseDatabase.getInstance()
+                    .getReference("avatars")
+                    .child(user.getUid());
+
+            avatarRef.removeValue().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // Nếu xóa thành công, cập nhật avatar về ảnh mặc định
+                    avatarImageView.setImageResource(R.drawable.img_profile_avatar);
+                    // Cập nhật avatar trong tất cả các bài đăng của người dùng
+                    updatePostsAvatar(null);
+                    Toast.makeText(MyProfileActivity.this, "", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MyProfileActivity.this, "", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -267,6 +317,8 @@ public class MyProfileActivity extends Activity {
                     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("avatars").child(user.getUid());
                     userRef.child("avatar").setValue(avatarBase64).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+                            // Update the avatar in all posts
+                            updatePostsAvatar(avatarBase64);
                             Toast.makeText(MyProfileActivity.this, "Avatar updated", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(MyProfileActivity.this, "Failed to update avatar", Toast.LENGTH_SHORT).show();
@@ -291,5 +343,8 @@ public class MyProfileActivity extends Activity {
         byte[] decodedBytes = Base64.decode(base64, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
+
+
 }
+
 

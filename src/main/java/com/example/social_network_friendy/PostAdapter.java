@@ -1,5 +1,7 @@
 package com.example.social_network_friendy;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.social_network_friendy.databinding.ActivityNewsFeedBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -41,6 +44,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     private Context context; // Context để sử dụng trong Intent
     private List<Post> postList; // Danh sách bài viết
+    private ActivityNewsFeedBinding binding;
     private Handler handler = new Handler();
     private Runnable updateTimeTask = new Runnable() {
         @Override
@@ -103,11 +107,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         if (post.getImageBase64() != null && !post.getImageBase64().isEmpty()) {
             holder.imgPost.setVisibility(View.VISIBLE);
             holder.cardView.setVisibility(View.VISIBLE);
+
             try {
                 Glide.with(holder.itemView.getContext())
                         .load(Base64.decode(post.getImageBase64().get(0), Base64.DEFAULT)) // Chỉ lấy hình ảnh đầu tiên
                         .apply(new RequestOptions()
-                                .transform(new CenterCrop(), new RoundedCorners(20))) // Bo góc 30dp
+                                .transform(new CenterCrop(), new RoundedCorners(18))) // Bo góc 30dp
                         .override(500, 500) // Resize ảnh thành 500x500
                         .into(holder.imgPost);
             } catch (Exception e) {
@@ -155,6 +160,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             ((Activity) context).startActivityForResult(intent, 1); // Mở Activity và nhận kết quả từ Activity
 
         });
+        holder.commentsTextView.setOnClickListener(v -> {
+            Log.d("PostAdapter", "CommentsTextView clicked for post: " + post.getPostId());
+
+            // Create an Intent to open CommentActivity
+            Intent intent = new Intent(context, CommentActivity.class);
+            intent.putExtra("postId", post.getPostId()); // Pass the postId to CommentActivity
+            context.startActivity(intent); // Start the activity
+        });
         // Xử lý sự kiện click vào nút tim (like)
         holder.imgHeart.setOnClickListener(v -> {
             // Xử lý khi người dùng nhấn like hoặc bỏ like
@@ -196,10 +209,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     Log.e("PostAdapter", "Failed to update likes: " + error.getMessage());
                 }
             });
-
-
         });
-
 
         // Xử lý sự kiện click vào biểu tượng bình luận
         holder.imgComment.setOnClickListener(v -> {
@@ -302,12 +312,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             Log.e("PostAdapter", "Post owner ID is null.");
             return;
         }
-//
-//        // Kiểm tra nếu post.getUserId() là null
-//        if (post.getUsername() == null) {
-//            Log.e("PostAdapter", "Post userId is null, can't send like notification.");
-//            return; // Dừng lại nếu không có userId trong bài viết
-//        }
+
         // Lấy username của người dùng hiện tại
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("username");
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -318,9 +323,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     Log.e("PostAdapter", "Current username is null");
                     return;
                 }
-//                // Gửi thông báo tới chủ bài viết
-//                DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications")
-//                        .child(post.getUsername());  // Gửi thông báo cho chủ bài viết
+
                 // Tạo thông báo
                 DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications").child(postOwnerId);
                 String notificationId = notificationsRef.push().getKey();
@@ -386,13 +389,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             tvContent = itemView.findViewById(R.id.tvContent);
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
             tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
+            commentsTextView = itemView.findViewById(R.id.commentsTextView);
             imgPost = itemView.findViewById(R.id.imgPost);
             imgHeart = itemView.findViewById(R.id.imgHeart);
             imgComment = itemView.findViewById(R.id.imgComment);
             avatarImageView = itemView.findViewById(R.id.avatarImageView);
             cardView = itemView.findViewById(R.id.cardViewPost);
 
-            if (tvUsername == null || tvContent == null || imgPost == null) {
+            if (tvUsername == null || tvContent == null || imgPost == null ) {
                 Log.e("PostViewHolder", "Error inflating View, check post_item.xml");
             }
         }

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:descendantFocusability="blocksDescendants"
     android:padding="10dp">
@@ -49,16 +50,26 @@
         android:layout_marginTop="8dp" />
 
     <!-- Hình ảnh bài viết -->
-    <ImageView
-        android:id="@+id/imgPost"
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewPost"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="8dp"
-        android:scaleType="centerCrop"
-        android:contentDescription="Post image"
         android:layout_marginBottom="10dp"
-        android:visibility="gone"/>
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true">
 
+        <ImageView
+            android:id="@+id/imgPost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:contentDescription="Post image" />
+    </androidx.cardview.widget.CardView>
+    
     <!-- Reactions (like, comment) -->
     <LinearLayout
         android:layout_width="match_parent"

@@ -29,6 +29,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -63,7 +65,6 @@ public class MyProfileActivity extends Activity {
         postList = new ArrayList<>();
         postAdapter = new PostAdapter(this, postList);
         recyclerView.setAdapter(postAdapter);
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
@@ -76,7 +77,8 @@ public class MyProfileActivity extends Activity {
 
                     if (username != null && !username.isEmpty()) {
                         usernameTextView.setText(username);
-                        fetchPostsForUser(username);
+//                        fetchPostsForUser(username);
+                        fetchPosts(username);
                         loadFollowersCount(username);
                     } else {
                         usernameTextView.setText("Unknown User");
@@ -152,26 +154,35 @@ public class MyProfileActivity extends Activity {
             }
         });
     }
+    private void fetchPosts(String username) {
+        postsRef.orderByChild("username").equalTo(username)  // Lọc theo username
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        postList.clear();  // Xóa danh sách cũ để tránh trùng lặp
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Post post = snapshot.getValue(Post.class);
+                            if (post != null) {
+                                postList.add(post);  // Thêm bài viết vào danh sách
+                            }
+                        }
 
-    private void fetchPostsForUser(String username) {
-        postsRef.orderByChild("username").equalTo(username).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                postList.clear();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Post post = postSnapshot.getValue(Post.class);
-                    if (post != null) {
-                        postList.add(post);
+                        // Sắp xếp lại theo thứ tự thời gian (mới nhất lên đầu)
+                        Collections.sort(postList, new Comparator<Post>() {
+                            @Override
+                            public int compare(Post post1, Post post2) {
+                                return Long.compare(post2.getTimestamp(), post1.getTimestamp());
+                            }
+                        });
+
+                        postAdapter.notifyDataSetChanged();  // Thông báo cho adapter về dữ liệu mới
                     }
-                }
-                postAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(MyProfileActivity.this, "" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Xử lý lỗi nếu việc truy xuất dữ liệu bị hủy
+                    }
+                });
     }
 
     private void loadUserProfile() {

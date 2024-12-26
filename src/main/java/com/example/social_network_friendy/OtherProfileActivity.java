@@ -25,8 +25,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class OtherProfileActivity extends Activity {
@@ -37,7 +38,7 @@ public class OtherProfileActivity extends Activity {
     private DatabaseReference postsRef;
     private DatabaseReference followersRef;
     private TextView usernameTextView;
-    private TextView followersCountTextView;
+    private TextView followersCount;
     private Button followButton;
     private String username;
     private boolean isFollowing = false;
@@ -52,7 +53,7 @@ public class OtherProfileActivity extends Activity {
 
         recyclerView = findViewById(R.id.postRecyclerView);
         usernameTextView = findViewById(R.id.usernameTextView);
-        followersCountTextView = findViewById(R.id.followersCount);
+        followersCount = findViewById(R.id.followersCount);
         followButton = findViewById(R.id.followButton);
 
         username = getIntent().getStringExtra("username");
@@ -65,37 +66,50 @@ public class OtherProfileActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(postAdapter);
 
-        fetchPostsByUser(username);
+        fetchPosts(username);
         loadFollowersCount(username);
         setupFollowButton(username);
 
         findViewById(R.id.backIcon).setOnClickListener(v -> finish());
         findViewById(R.id.backText).setOnClickListener(v -> finish());
         loadUserProfile();
+
+
     }
 
-    private void fetchPostsByUser(String username) {
-        postsRef.orderByChild("username").equalTo(username).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                postList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Post post = snapshot.getValue(Post.class);
-                    if (post != null) {
-                        postList.add(post);
-                    }
-                }
-                postAdapter.notifyDataSetChanged();
-            }
+    private void fetchPosts(String username) {
+        postsRef.orderByChild("username").equalTo(username)  // Lọc theo username
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        postList.clear();  // Xóa danh sách cũ để tránh trùng lặp
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Post post = snapshot.getValue(Post.class);
+                            if (post != null) {
+                                postList.add(post);  // Thêm bài viết vào danh sách
+                            }
+                        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(OtherProfileActivity.this, "Lỗi khi tải dữ liệu: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                        // Sắp xếp lại theo thứ tự thời gian (mới nhất lên đầu)
+                        Collections.sort(postList, new Comparator<Post>() {
+                            @Override
+                            public int compare(Post post1, Post post2) {
+                                return Long.compare(post2.getTimestamp(), post1.getTimestamp());
+                            }
+                        });
+
+                        postAdapter.notifyDataSetChanged();  // Thông báo cho adapter về dữ liệu mới
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Xử lý lỗi nếu việc truy xuất dữ liệu bị hủy
+                    }
+                });
     }
 
     private void loadUserProfile() {
+        // Sử dụng username để lấy UID của người dùng khác
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         usersRef.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -106,6 +120,7 @@ public class OtherProfileActivity extends Activity {
                     TextView birthDateTextView = findViewById(R.id.birthDateTextView);
                     TextView locationTextView = findViewById(R.id.locationTextView);
 
+                    // Bio
                     String bio = userSnapshot.child("bio").getValue(String.class);
                     if (bio != null && !bio.trim().isEmpty()) {
                         bioTextView.setText(bio);
@@ -114,6 +129,7 @@ public class OtherProfileActivity extends Activity {
                         bioTextView.setVisibility(View.GONE);
                     }
 
+                    // Birth Date
                     String birthDate = userSnapshot.child("birthDate").getValue(String.class);
                     if (birthDate != null && !birthDate.trim().isEmpty()) {
                         birthDateTextView.setText(birthDate);
@@ -122,6 +138,7 @@ public class OtherProfileActivity extends Activity {
                         birthDateTextView.setVisibility(View.GONE);
                     }
 
+                    // Location
                     String location = userSnapshot.child("location").getValue(String.class);
                     if (location != null && !location.trim().isEmpty()) {
                         locationTextView.setText(location);
@@ -136,7 +153,6 @@ public class OtherProfileActivity extends Activity {
                                 .load(profileImageUrl)
                                 .into((ImageView) findViewById(R.id.avatarImageView));
                     }
-
                     DatabaseReference avatarRef = FirebaseDatabase.getInstance()
                             .getReference("avatars")
                             .child(userSnapshot.getKey());
@@ -178,7 +194,7 @@ public class OtherProfileActivity extends Activity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 long count = dataSnapshot.getChildrenCount();
-                followersCountTextView.setText(count + " Followers");
+                followersCount.setText(count + " Followers");
             }
 
             @Override
@@ -200,11 +216,13 @@ public class OtherProfileActivity extends Activity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    // Đã theo dõi
                     isFollowing = true;
                     followButton.setText("Đang theo dõi");
                     followButton.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
                     followButton.setTextColor(Color.BLACK);
                 } else {
+                    // Chưa theo dõi
                     isFollowing = false;
                     followButton.setText("Theo dõi");
                     followButton.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
@@ -217,24 +235,24 @@ public class OtherProfileActivity extends Activity {
                 Toast.makeText(OtherProfileActivity.this, "Lỗi khi tải dữ liệu: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
         followButton.setOnClickListener(v -> {
             if (!isFollowing) {
-                followersRef.child(usernameToFollow).child(currentUserId).setValue(true).addOnSuccessListener(aVoid -> {
-                    isFollowing = true;
-                    followButton.setText("Đang theo dõi");
-                    followButton.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-                    followButton.setTextColor(Color.BLACK);
-                    updateFollowersCount(usernameToFollow);
-                });
+                followersRef.child(usernameToFollow).child(currentUserId).setValue(true);
+                isFollowing = true;
+
+                followButton.setText("Đang theo dõi");
+                followButton.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+                followButton.setTextColor(Color.BLACK);
+
+                updateFollowersCount(usernameToFollow);
             } else {
-                followersRef.child(usernameToFollow).child(currentUserId).removeValue().addOnSuccessListener(aVoid -> {
-                    isFollowing = false;
-                    followButton.setText("Theo dõi");
-                    followButton.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
-                    followButton.setTextColor(Color.WHITE);
-                    updateFollowersCount(usernameToFollow);
-                });
+                followersRef.child(usernameToFollow).child(currentUserId).removeValue();
+                isFollowing = false;
+
+                followButton.setText("Theo dõi");
+                followButton.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
+                followButton.setTextColor(Color.WHITE);
+                updateFollowersCount(usernameToFollow);
             }
         });
     }
@@ -244,7 +262,7 @@ public class OtherProfileActivity extends Activity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 long followersCount = snapshot.getChildrenCount();
-                followersCountTextView.setText(followersCount + " Followers");
+                followersRef.child(usernameToFollow).child("followersCount").setValue(followersCount);
             }
 
             @Override

@@ -108,49 +108,4 @@
             android:layout_weight="1"
             android:src="@drawable/ic_profile" /> <!-- Icon profile -->
     </LinearLayout>
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="45dp"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:gravity="center"-->
-<!--        android:background="#F5F5F5"-->
-<!--        android:padding="2dp"-->
-<!--        android:layout_alignParentBottom="true">-->
-<!--        -->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/ImgSearch-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:src="@drawable/ic_home" />-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/ImgSearch"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:src="@drawable/ic_search" />-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/imgAdd"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:src="@drawable/ic_add" /> &lt;!&ndash; Icon add &ndash;&gt;-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/icFavorite"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:src="@drawable/ic_favorite" />-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/myprofile"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:src="@drawable/ic_profile" />-->
-<!--    </LinearLayout>-->
 </LinearLayout>

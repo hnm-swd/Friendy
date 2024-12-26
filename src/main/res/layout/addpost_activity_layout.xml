@@ -42,15 +42,15 @@
                         android:textStyle="bold"
                         android:gravity="center" />
 
-                    <ImageView
-                        android:id="@+id/admin"
-                        android:layout_width="50dp"
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatarImageView"
+                        android:layout_width="41dp"
                         android:layout_height="56dp"
                         android:layout_row="1"
                         android:layout_column="0"
+                        android:layout_gravity="top|center_horizontal"
                         android:layout_margin="10dp"
-                        android:src="@drawable/ava_user"
-                        android:layout_gravity="top|center_horizontal" />
+                        android:src="@drawable/img_profile_avatar" />
 
                     <TableLayout
                         android:layout_row="1"

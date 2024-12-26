@@ -7,11 +7,11 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/meofinding"
-        android:src="@drawable/meo_finding"/>
+        android:id="@+id/avatarImageView"
+        android:src="@drawable/img_profile_avatar"/>
     <LinearLayout
         android:padding="10dp"
-        android:layout_toEndOf="@id/meofinding"
+        android:layout_toEndOf="@id/avatarImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
